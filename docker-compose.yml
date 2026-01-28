@@ -1,0 +1,91 @@
+name: bengkelmotor
+
+services:
+  db:
+    build:
+      context: .docker/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: bengkel_motor
+      MYSQL_USER: bengkel_motor
+      MYSQL_PASSWORD: bengkel_motor
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - default
+
+  nginx:
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    develop:
+      watch:
+        - action: rebuild
+          path: .docker/nginx
+
+        - action: rebuild
+          path: ./app
+          ignore:
+            - ./app/node_modules/**
+            - ./app/.dockerignore
+            - ./app/.env.example
+            - ./app/.gitignore
+            - ./app/README.md
+
+        - action: rebuild
+          path: ./landing
+          ignore:
+            - ./landing/node_modules/**
+            - ./landing/.dockerignore
+            - ./landing/.env
+            - ./landing/.gitignore
+    networks:
+      - default
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend
+          ignore:
+            - ./backend/node_modules/**
+            - ./backend/.dockerignore
+            - ./backend/.env.example
+            - ./backend/.gitignore
+            - ./backend/README.md
+    env_file:
+      - ./backend/.env
+    environment:
+      PORT: 5000
+      DB_HOST: db
+      DB_USER: bengkel_motor
+      DB_PASS: bengkel_motor
+      DB_NAME: bengkel_motor
+      JWT_SECRET: rahasia123
+      VAPID_PUBLIC_KEY: BFS6LvhOgf4xxurpfDr8SifTkRRAof4gmXnKLvND8Kx0SDLJf-Wm4i7Qiq9QSsLpfKlIsgcyPwVbz_5tsFQHcLA
+      VAPID_PRIVATE_KEY: rYImioE1IJZ8x7rY-N8k5FoJn2ofW9Sa8LIl5dKEXXM
+    networks:
+      - default
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/.docker/mysql/data
+      o: bind
+
+networks:
+  default:
+    driver: bridge

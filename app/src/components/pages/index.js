@@ -1,0 +1,12 @@
+export { default as LoginPage } from './LoginPage';
+export { default as Dashboard } from './Dashboard';
+export { default as AdminDashboard } from './AdminDashboard';
+export { default as CustomerDashboard } from './CustomerDashboard';
+export { default as ServicesPage } from './ServicesPage';
+export { default as RewardsPage } from './RewardsPage';
+export { default as TransactionsPage } from './TransactionsPage';
+export { default as CustomersPage } from './CustomersPage';
+export { default as VehiclesPage } from './VehiclesPage';
+export { default as MaintenancePage } from './MaintenancePage';
+export { default as SchedulePage } from './SchedulePage';
+export { default as HistoryPage } from './HistoryPage';
