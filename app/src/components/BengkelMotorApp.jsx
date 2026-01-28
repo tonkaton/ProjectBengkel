@@ -63,7 +63,7 @@ const BengkelMotorApp = () => {
     closeModal();
   };
 
-  // Form submit handlers
+  // --- FORM SUBMIT HANDLERS ---
   const handleServiceSubmit = async () => {
     const isEditing = modalType === 'editService';
     const result = isEditing
@@ -115,7 +115,6 @@ const BengkelMotorApp = () => {
       color: form.color,
     };
 
-    // For admin, include customerId if provided, otherwise it will use the logged-in user
     if (currentUser?.role === 'admin' && form.customerId) {
       payload.UserId = form.customerId;
     }
@@ -153,7 +152,7 @@ const BengkelMotorApp = () => {
     }
   };
 
-  // Render modal content based on type
+  // --- RENDER MODAL CONTENT ---
   const renderModalContent = () => {
     if (modalType === 'addService' || modalType === 'editService') {
       return (
@@ -232,11 +231,13 @@ const BengkelMotorApp = () => {
     return null;
   };
 
-  // Render page content based on active tab
+  // --- RENDER PAGE CONTENT ---
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard />;
+        // Pass setActiveTab ke Dashboard biar tombol di Chatbot bisa navigasi
+        return <Dashboard onNavigate={setActiveTab} />;
+      
       case 'services':
         return <ServicesPage onOpenModal={handleOpenModal} />;
       case 'rewards':
@@ -247,14 +248,21 @@ const BengkelMotorApp = () => {
         return <CustomersPage onOpenModal={handleOpenModal} />;
       case 'vehicles':
         return <VehiclesPage onOpenModal={handleOpenModal} />;
+      
       case 'maintenance':
+        // Ini halaman Admin (Tabel Maintenance)
         return <MaintenancePage onOpenModal={handleOpenModal} />;
+        
       case 'schedule':
+        // Ini halaman Customer (Jadwal Servis Saya)
+        // Tombol Chatbot akan mengarah ke sini
         return <SchedulePage />;
+        
       case 'history':
         return <HistoryPage />;
+        
       default:
-        return <Dashboard />;
+        return <Dashboard onNavigate={setActiveTab} />;
     }
   };
 

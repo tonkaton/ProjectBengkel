@@ -3,10 +3,14 @@ import { useAuth } from '../../contexts';
 import AdminDashboard from './AdminDashboard';
 import CustomerDashboard from './CustomerDashboard';
 
-const Dashboard = () => {
-  const { isAdmin } = useAuth();
+const Dashboard = ({ onNavigate }) => {
+  const { isAdmin } = useAuth(); 
 
-  return isAdmin ? <AdminDashboard /> : <CustomerDashboard />;
+  return isAdmin ? (
+    <AdminDashboard /> 
+  ) : (
+    <CustomerDashboard onNavigate={onNavigate} />
+  );
 };
 
 export default Dashboard;
