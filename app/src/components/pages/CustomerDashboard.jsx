@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Star, Bike } from 'lucide-react';
 import { useAuth, useData } from '../../contexts';
 import { formatRupiah, formatDateTime } from '../../utils/formatters';
@@ -6,30 +6,40 @@ import { maintenanceService } from '../../services';
 import ServiceAssistant from '../ui/ServiceAssistant'; 
 
 const CustomerDashboard = ({ onNavigate }) => {
-  const { currentUser } = useAuth();
+  // [UPDATE] Ambil token langsung dari useAuth, jangan manual dari storage
+  const { currentUser, token } = useAuth();
   const { transactions, vehicles } = useData(); 
   
   const [latestMaintenance, setLatestMaintenance] = useState(null);
   const [loadingMaintenance, setLoadingMaintenance] = useState(true);
 
+  // [OPTIMASI] Gunakan useMemo agar tidak filter ulang setiap render
   // 1. Filter Transaksi User Ini
-  const myTransactions = transactions
-    .filter((t) => t.UserId === currentUser?.id)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const myTransactions = useMemo(() => {
+    if (!currentUser || !transactions) return [];
+    return transactions
+      .filter((t) => t.UserId === currentUser.id)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [currentUser, transactions]);
 
   // 2. Filter Motor User Ini
-  const myVehicles = vehicles.filter((v) => {
-     return v.UserId === currentUser?.id || v.userId === currentUser?.id; 
-  });
+  const myVehicles = useMemo(() => {
+    if (!currentUser || !vehicles) return [];
+    return vehicles.filter((v) => {
+       // Handle potensi beda casing property dari backend
+       return v.UserId === currentUser.id || v.userId === currentUser.id; 
+    });
+  }, [currentUser, vehicles]);
 
-  // 3. Fetch Data 'Next Service' Khusus untuk Assistant
+  // 3. Fetch Data 'Next Service'
   useEffect(() => {
     const fetchMaintenance = async () => {
       try {
-        const token = localStorage.getItem('token'); 
+        // [UPDATE] Cek token dari context
         if (!token) return;
 
         setLoadingMaintenance(true);
+        // Pass token yang didapat dari context
         const res = await maintenanceService.getLatestUpcoming(token);
         setLatestMaintenance(res.data || null);
       } catch (error) {
@@ -39,8 +49,10 @@ const CustomerDashboard = ({ onNavigate }) => {
       }
     };
 
-    fetchMaintenance();
-  }, []);
+    if (token) {
+        fetchMaintenance();
+    }
+  }, [token]); // Dependency array ke token
 
   return (
     <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto relative pb-32 md:pb-24">
@@ -51,7 +63,7 @@ const CustomerDashboard = ({ onNavigate }) => {
           <div>
             <p className="text-red-100 font-medium mb-1 tracking-wide text-sm md:text-base">Selamat Datang Kembali,</p>
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight">
-              {currentUser?.name || 'Ameng'}! 👋
+              {currentUser?.name || 'User'}! 👋
             </h2>
           </div>
           
@@ -153,7 +165,6 @@ const CustomerDashboard = ({ onNavigate }) => {
       </div>
 
       {/* --- SERVICE ASSISTANT --- */}
-      {/* UPDATE DISINI: Arahkan ke 'schedule', bukan 'maintenance' */}
       <ServiceAssistant 
         maintenanceData={latestMaintenance} 
         onViewDetail={() => onNavigate && onNavigate('schedule')}

@@ -5,7 +5,7 @@ import { STORAGE_KEYS, USER_ROLES } from '../constants';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem(STORAGE_KEYS.TOKEN));
+  const [token, setToken] = useState(() => sessionStorage.getItem(STORAGE_KEYS.TOKEN));
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true);
     } catch (error) {
       console.error('Auth check error:', error);
-      localStorage.removeItem(STORAGE_KEYS.TOKEN);
+      sessionStorage.removeItem(STORAGE_KEYS.TOKEN);
       setToken(null);
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const data = await authService.login(email, password);
-      localStorage.setItem(STORAGE_KEYS.TOKEN, data.token);
+      sessionStorage.setItem(STORAGE_KEYS.TOKEN, data.token);
       setToken(data.token);
       setCurrentUser(data.user);
       setUserRole(data.user.role);
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    sessionStorage.removeItem(STORAGE_KEYS.TOKEN);
     setToken(null);
     setIsLoggedIn(false);
     setUserRole(null);

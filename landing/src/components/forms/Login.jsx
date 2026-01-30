@@ -29,9 +29,8 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token and user data
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
         
         // Redirect based on role
         if (data.user.role === 'admin') {
@@ -39,8 +38,7 @@ export default function Login() {
         } else {
           alert('Login Berhasil! Mengalihkan ke Dashboard...');
         }
-        
-        // Redirect to app
+      
         window.location.href = APP_URL;
       } else {
         alert(data.message || 'Login Gagal');
