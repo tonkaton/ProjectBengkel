@@ -2,7 +2,6 @@ const Transaction = require('../models/Transaction');
 const User = require('../models/User');
 const Service = require('../models/Service');
 const LoyaltyPoint = require('../models/LoyaltyPoint');
-const Maintenance = require('../models/Maintenance');
 
 exports.getAll = async (req, res) => {
   try {
@@ -112,14 +111,6 @@ exports.updateStatus = async (req, res) => {
       if (lp) {
         await lp.increment('points', { by: t.points_earned });
       }
-
-      await Maintenance.create({
-        UserId: t.UserId,
-        motor_name: t.note || 'Motor Pelanggan',
-        service_date: new Date(),
-        next_service: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-        note: t.Service ? `Servis berkala setelah ${t.Service.name}` : 'Servis berkala'
-      });
     }
 
     t.status = status;
