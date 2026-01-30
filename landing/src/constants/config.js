@@ -14,8 +14,8 @@ export const COMPANY = {
   tagline: 'Servis Cepat, Hasil Hebat!',
   description: 'Bengkel motor modern dengan sentuhan profesional. Kami menghadirkan performa maksimal untuk setiap motor — dari servis ringan hingga upgrade performa.',
   address: 'Jl. Sintink No. 1, Jakarta',
-  phone: '0881-1243-2928',
-  phoneRaw: '088112432928',
+  phone: '087776131793',
+  phoneRaw: '087776131793',
   whatsapp: "6287776131793",
   operationalHours: {
     weekday: 'Senin - Sabtu: 08.00 - 18.00',

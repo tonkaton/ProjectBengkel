@@ -50,8 +50,8 @@ export default function Hero() {
           <Button href="#services" variant="primary" size="lg">
             ⚙️ Lihat Layanan
           </Button>
-          <Button href="#contact" variant="secondary" size="lg">
-            🚀 Booking Sekarang
+          <Button href="#contact" variant="primary" size="lg">
+            🚀 Hubungi Kami
           </Button>
         </motion.div>
       </div>

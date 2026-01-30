@@ -13,7 +13,7 @@ const TransactionsPage = ({ onOpenModal }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   // 🔍 SEARCH + FILTER
   const filteredTransactions = useMemo(() => {
@@ -46,7 +46,7 @@ const TransactionsPage = ({ onOpenModal }) => {
   const handleExportExcel = () => {
     const dataExport = filteredTransactions.map((t) => ({
       ID: t.id,
-      UserID: t.UserId,
+      Name: t.UserId,
       Tanggal: new Date(t.createdAt).toLocaleString(),
       Catatan: t.note || "-",
       Status: t.status || "Menunggu",
@@ -181,23 +181,45 @@ const TransactionsPage = ({ onOpenModal }) => {
       )}
 
       {/* PAGINATION */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1
-                  ? "bg-blue-600 text-white"
-                  : "bg-white/10 text-gray-300"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
+{totalPages > 1 && (
+  <div className="flex justify-center items-center gap-2 pt-4">
+
+    {/* PREV BUTTON */}
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+      className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+    >
+      Prev
+    </button>
+
+    {/* PAGE NUMBERS */}
+    {Array.from({ length: totalPages }, (_, i) => (
+      <button
+        key={i}
+        onClick={() => setCurrentPage(i + 1)}
+        className={`px-3 py-1 rounded-lg border ${
+          currentPage === i + 1
+            ? "bg-yellow-500 text-black border-yellow-500 font-bold"
+            : "bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
+        }`}
+      >
+        {i + 1}
+      </button>
+    ))}
+
+    {/* NEXT BUTTON */}
+    <button
+      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+      disabled={currentPage === totalPages}
+      className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+    >
+      Next
+    </button>
+
+  </div>
+)}
+
     </div>
   );
 };
