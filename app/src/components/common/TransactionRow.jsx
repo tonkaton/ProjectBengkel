@@ -12,61 +12,95 @@ const TransactionRow = ({
 }) => {
   const { isAdmin } = useAuth();
 
+  // 1. Logic Nama Customer
+  const customerName = transaction.User?.name || transaction.customer?.name || transaction.owner?.name || 'Customer';
+
+  // 2. Logic Nama Servis
+  const serviceName = transaction.Service?.name || transaction.service?.name || transaction.note || 'Servis Rutin';
+
+  // 3. Logic Judul UX
+  const mainTitle = isAdmin ? customerName : serviceName;
+  const subTitle = isAdmin ? serviceName : (transaction.note || 'Perawatan Kendaraan');
+
+  // [LOGIC BARU] Tentukan Tanggal yang Ditampilkan
+  // Kalau Status 'Selesai' -> Pakai updatedAt (Kapan duit masuk/beres)
+  // Kalau Belum -> Pakai createdAt (Kapan order dibuat)
+  const displayDate = transaction.status === 'Selesai' 
+    ? transaction.updatedAt 
+    : transaction.createdAt;
+
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Selesai': return 'text-emerald-400';
-      case 'Proses': return 'text-yellow-400';
-      case 'Menunggu': return 'text-gray-400';
-      default: return 'text-gray-400';
+      case 'Selesai': return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
+      case 'Proses': return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
+      case 'Menunggu': return 'text-zinc-400 border-zinc-500/30 bg-zinc-500/10';
+      default: return 'text-zinc-400 border-zinc-500/30 bg-zinc-500/10';
     }
   };
 
   return (
-    <div className="flex items-center justify-between p-4 bg-zinc-800/70 rounded-xl border border-zinc-700 hover:border-zinc-600 transition">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-zinc-800/70 rounded-xl border border-zinc-700 hover:border-zinc-600 transition gap-4">
 
-      {/* LEFT */}
-      <div className="flex items-center gap-4 min-w-0">
-        <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-yellow-500 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
+      {/* LEFT: ICON & DETAILS */}
+      <div className="flex items-center gap-4 min-w-0 flex-1">
+        <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-900/20 flex-shrink-0 border border-red-500/20">
           <Bike className="w-6 h-6 text-white" />
         </div>
 
         <div className="min-w-0">
-          <h4 className="text-white font-semibold truncate">
-            {transaction.customer?.name || 'Customer'}
+          <h4 className="text-white font-bold truncate text-base">
+            {mainTitle}
           </h4>
-          <p className="text-sm text-zinc-400 truncate">
-            {transaction.service?.name || transaction.note || 'Servis'}
+          
+          <p className="text-sm text-zinc-400 truncate flex items-center gap-2">
+            <span className={isAdmin ? "text-red-400 font-medium" : "text-zinc-500"}>
+              {subTitle}
+            </span>
+          </p>
+
+          {/* TANGGAL MOBILE (Pake displayDate) */}
+          <p className="text-[10px] text-zinc-500 mt-0.5 sm:hidden">
+            {formatDateTime(displayDate)}
           </p>
         </div>
       </div>
 
-      {/* RIGHT */}
-      <div className="flex flex-col items-end text-right gap-1 min-w-[160px]">
+      {/* RIGHT: AMOUNT & ACTIONS */}
+      <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 sm:gap-1 min-w-[140px]">
 
-        <p className={`font-bold text-base ${getStatusColor(transaction.status)}`}>
+        <p className="font-mono font-bold text-lg text-white tracking-tight">
           {formatRupiah(transaction.amount)}
         </p>
 
-        <p className="text-xs text-zinc-400">
-          {transaction.points_earned} poin • {formatDateTime(transaction.createdAt)}
+        <div className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${getStatusColor(transaction.status)}`}>
+          {transaction.status || 'Menunggu'}
+        </div>
+
+        {/* TANGGAL DESKTOP (Pake displayDate) */}
+        <p className="text-[10px] text-zinc-500 hidden sm:block mt-1">
+          +{transaction.points_earned} XP • {formatDateTime(displayDate)}
         </p>
 
-        {isAdmin && showStatusButton && onToggleStatus && (
-          <button
-            onClick={() => onToggleStatus(transaction.id, transaction.status)}
-            className="mt-2 text-xs bg-zinc-700 hover:bg-zinc-600 px-3 py-1 rounded-lg transition"
-          >
-            Ubah Status
-          </button>
-        )}
-
-        {isAdmin && showDelete && onDelete && (
-          <button
-            onClick={() => onDelete(transaction.id)}
-            className="mt-1 text-xs bg-red-600 hover:bg-red-700 px-3 py-1 rounded-lg transition"
-          >
-            Hapus
-          </button>
+        {isAdmin && (
+          <div className="flex gap-2 mt-2">
+            {showStatusButton && onToggleStatus && (
+              <button
+                onClick={() => onToggleStatus(transaction.id, transaction.status)}
+                className="text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-200 px-3 py-1.5 rounded-lg transition border border-zinc-600"
+              >
+                Ubah Status
+              </button>
+            )}
+            
+            {showDelete && onDelete && (
+              <button
+                onClick={() => onDelete(transaction.id)}
+                className="text-xs bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-900/50 px-3 py-1.5 rounded-lg transition"
+              >
+                Hapus
+              </button>
+            )}
+          </div>
         )}
 
       </div>

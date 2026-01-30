@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DollarSign, TrendingUp, Users, Gift } from 'lucide-react';
 import { useData } from '../../contexts';
 import { formatRupiah } from '../../utils/formatters';
@@ -7,6 +7,24 @@ import { TransactionRow, MaintenanceCard } from '../common';
 
 const AdminDashboard = () => {
   const { transactions, customers, rewards, maintenance } = useData();
+  const todayIncome = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+
+    return transactions
+      .filter((t) => {
+        if (t.status !== 'Selesai') return false;
+        const finishDate = new Date(t.updatedAt).toISOString().split('T')[0];        
+        return finishDate === today;
+      })
+      .reduce((total, t) => total + Number(t.amount || 0), 0);
+  }, [transactions]);
+
+  const todayTransactionsCount = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return transactions.filter(t => 
+        new Date(t.createdAt).toISOString().split('T')[0] === today
+    ).length;
+  }, [transactions]);
 
   return (
     <div className="space-y-6">
@@ -15,13 +33,13 @@ const AdminDashboard = () => {
         <StatCard
           icon={DollarSign}
           label="Pendapatan Hari Ini"
-          value={formatRupiah(0)}
+          value={formatRupiah(todayIncome)}
           color="bg-red-600"
         />
         <StatCard
           icon={TrendingUp}
           label="Transaksi Hari Ini"
-          value={transactions.length}
+          value={todayTransactionsCount}
           color="bg-yellow-600"
         />
         <StatCard
@@ -56,12 +74,16 @@ const AdminDashboard = () => {
             <p className="text-zinc-500 text-center py-8">Belum ada transaksi</p>
           ) : (
             <div className="space-y-4">
-              {transactions.slice(0, 5).map((t) => (
-                <TransactionRow
-                  key={t.id}
-                  transaction={t}
-                  showActions={false} // ⬅️ biar tombol tidak muncul di dashboard
-                />
+              {[...transactions]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) 
+                .slice(0, 5)
+                .map((t) => (
+                  <TransactionRow
+                    key={t.id}
+                    transaction={t}
+                    showStatusButton={false} 
+                    showDelete={false} 
+                  />
               ))}
             </div>
           )}

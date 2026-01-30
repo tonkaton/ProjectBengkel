@@ -29,7 +29,7 @@ const VehiclesPage = ({ onOpenModal }) => {
           v.plate,
           String(v.year),
           v.color,
-          v.User?.name,
+          v.owner?.name,
         ].some((field) => field?.toLowerCase().includes(keyword))
       );
     }
@@ -158,10 +158,10 @@ const VehiclesPage = ({ onOpenModal }) => {
                     <span className="capitalize">{v.color || 'Tidak diketahui'}</span>
                   </div>
 
-                  {isAdmin && v.User && (
+                  {isAdmin && v.owner && (
                     <div className="flex items-center gap-1.5 bg-zinc-950/80 px-2.5 py-1 rounded-full border border-zinc-800 max-w-[160px]">
                       <User className="w-3.5 h-3.5 text-zinc-400" />
-                      <span className="truncate text-zinc-300">{v.User.name}</span>
+                      <span className="truncate text-zinc-300">{v.owner.name}</span>
                     </div>
                   )}
                 </div>

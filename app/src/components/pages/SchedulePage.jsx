@@ -6,6 +6,7 @@ import { formatDate } from '../../utils/formatters';
 const SchedulePage = () => {
   const { currentUser } = useAuth();
   const { maintenance } = useData();
+  
   const mySchedules = maintenance
     .filter((m) => m.UserId === currentUser?.id)
     .sort((a, b) => new Date(a.next_service) - new Date(b.next_service));
@@ -26,7 +27,7 @@ const SchedulePage = () => {
              <div className="p-2 bg-yellow-500/20 rounded-lg">
                 <Calendar className="w-6 h-6 md:w-8 md:h-8 text-yellow-500" />
              </div>
-             Jadwal Servis
+             Jadwal Maintenance
            </h2>
            <p className="text-zinc-400 text-sm mt-1 ml-1">
              Jangan lewatin jadwal servis motor kesayangan lu.
@@ -47,13 +48,20 @@ const SchedulePage = () => {
             </p>
         </div>
       ) : (
-        // Responsive Grid (1 col mobile, 2 col tablet, 3 col desktop)
+        // Responsive Grid
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {mySchedules.map((m) => {
                 const daysLeft = getDaysUntil(m.next_service);
                 const isUrgent = daysLeft <= 3 && daysLeft >= 0;
                 const isOverdue = daysLeft < 0;
-
+                const vehicleObj = m.Vehicle || m.vehicle || {};
+                
+                // Rakit nama motor
+                const brandModel = (vehicleObj.brand && vehicleObj.model) 
+                    ? `${vehicleObj.brand} ${vehicleObj.model}` 
+                    : null;
+                
+                const vehicleName = brandModel || m.motor_name || 'Motor Tidak Dikenal';
                 return (
                     <div 
                         key={m.id} 
@@ -78,17 +86,11 @@ const SchedulePage = () => {
                                     </div>
                                     <div>
                                         <h4 className="text-white font-bold text-base md:text-lg leading-tight line-clamp-1">
-                                            {m.Vehicle?.brand} {m.Vehicle?.model || 'Motor'}
+                                            {vehicleName}
                                         </h4>
-                                        <p className="text-zinc-500 text-xs font-mono mt-0.5">
-                                            {m.Vehicle?.plate || '-'}
-                                        </p>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Divider */}
-                            <div className="h-px w-full bg-zinc-800/50 mb-4"></div>
 
                             {/* Date Section (Main Focus) */}
                             <div className="mb-4">
