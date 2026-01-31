@@ -3,8 +3,8 @@
  */
 
 // API configuration
-export const API_URL = import.meta.env.VITE_API_URL;
-// export const API_URL = "https://backend-bengkel.miftadigital.cloud/api";
+// export const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = "https://backend-bengkel.miftadigital.cloud/api";
 
 // App URLs - Main application URL (different from landing page)
 export const APP_URL = import.meta.env.VITE_APP_URL;
