@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion';
-import { Button } from '../ui';
-import { Container } from '../layout';
-import { COMPANY, ANIMATION } from '../../constants';
+import { motion } from "framer-motion";
+import { Button } from "../ui";
+import { Container } from "../layout";
+import { COMPANY, ANIMATION } from "../../constants";
+import botakengineImage from "../../../assets/botakenginespeed.png";
 
 /**
  * About section component
@@ -15,7 +16,7 @@ export default function About() {
       <Container className="grid md:grid-cols-2 gap-12 items-center">
         {/* Workshop Image */}
         <motion.img
-          src="assets/botakenginespeed.png"
+          src={botakengineImage}
           alt="botakenginespeed"
           className="rounded-2xl shadow-2xl border border-gray-700 hover:border-yellow-400 hover:scale-105 transition-transform duration-500"
           initial={ANIMATION.fadeInLeft.initial}
@@ -36,18 +37,24 @@ export default function About() {
           </h2>
 
           <p className="text-gray-300 leading-relaxed mb-5">
-            <span className="text-yellow-400 font-semibold">{COMPANY.name}</span>
+            <span className="text-yellow-400 font-semibold">
+              {COMPANY.name}
+            </span>
           </p>
           <p className="text-gray-300 leading-relaxed mb-5">
-            hadir untuk memberikan pelayanan terbaik bagi semua jenis motor. 
-            Kami menggunakan peralatan modern dan tenaga ahli berpengalaman 
-            untuk memastikan performa motor Anda selalu optimal di setiap perjalanan
+            hadir untuk memberikan pelayanan terbaik bagi semua jenis motor.
+            Kami menggunakan peralatan modern dan tenaga ahli berpengalaman
+            untuk memastikan performa motor Anda selalu optimal di setiap
+            perjalanan
           </p>
-            
+
           <p className="text-gray-300 leading-relaxed mb-8">
-            Dengan fokus pada <span className="text-red-500 font-semibold">kualitas</span> 
-            {' '}dan <span className="text-yellow-400 font-semibold">kepuasan pelanggan</span>, 
-            kami percaya setiap motor layak mendapatkan perhatian terbaik.
+            Dengan fokus pada{" "}
+            <span className="text-red-500 font-semibold">kualitas</span> dan{" "}
+            <span className="text-yellow-400 font-semibold">
+              kepuasan pelanggan
+            </span>
+            , kami percaya setiap motor layak mendapatkan perhatian terbaik.
           </p>
 
           <Button href="#services" variant="danger" animate>
