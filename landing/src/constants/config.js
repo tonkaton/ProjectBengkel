@@ -3,23 +3,25 @@
  */
 
 // API configuration
-export const API_URL = import.meta.env.VITE_API_URL;
+// export const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = "https://backend-bengkel.miftadigital.cloud/api";
 
 // App URLs - Main application URL (different from landing page)
 export const APP_URL = import.meta.env.VITE_APP_URL;
 
 // Company information
 export const COMPANY = {
-  name: 'Sintink Garage Performance',
-  tagline: 'Servis Cepat, Hasil Hebat!',
-  description: 'Bengkel motor modern dengan sentuhan profesional. Kami menghadirkan performa maksimal untuk setiap motor — dari servis ringan hingga upgrade performa.',
-  address: 'Jl. Sintink No. 1, Jakarta',
-  phone: '087776131793',
-  phoneRaw: '087776131793',
+  name: "Sintink Garage Performance",
+  tagline: "Servis Cepat, Hasil Hebat!",
+  description:
+    "Bengkel motor modern dengan sentuhan profesional. Kami menghadirkan performa maksimal untuk setiap motor — dari servis ringan hingga upgrade performa.",
+  address: "Jl. Sintink No. 1, Jakarta",
+  phone: "087776131793",
+  phoneRaw: "087776131793",
   whatsapp: "6287776131793",
   operationalHours: {
-    weekday: 'Senin - Sabtu: 08.00 - 18.00',
-    weekend: 'Minggu: 08.00 - 14.00',
+    weekday: "Senin - Sabtu: 08.00 - 18.00",
+    weekend: "Minggu: 08.00 - 14.00",
   },
 };
 
