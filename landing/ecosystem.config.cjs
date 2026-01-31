@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "bengkel-landing",
       script: "serve",
-      args: "dist -s -l 3005",
+      args: ["-s", "dist", "-l", "3005"],
       cwd: "./",
       env: {
         NODE_ENV: "production",

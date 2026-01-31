@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "bengkel-app",
       script: "serve",
-      args: "dist -s -l 3004",
+      args: ["-s", "dist", "-l", "3004"],
       cwd: "./",
       env: {
         NODE_ENV: "production",
