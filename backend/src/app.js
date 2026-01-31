@@ -13,6 +13,7 @@ app.use(
       "http://localhost:5000",
       "https://app-botakengine.miftadigital.cloud",
       "http://app-botakengine.miftadigital.cloud",
+      "https://botakengine.miftadigital.cloud",
       "http://botakengine.miftadigital.cloud",
     ],
     credentials: true,
