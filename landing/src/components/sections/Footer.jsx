@@ -13,8 +13,8 @@ export default function Footer() {
         {' '}Semua hak dilindungi.
       </p>
       <p className="text-xs text-gray-500 mt-1">
-        Dibuat dengan hati dan kecepatan ala{' '}
-        <span className="text-red-500 font-semibold">Racing Team</span>.
+        Dibuat oleh{' '}
+        <span className="text-red-500 font-semibold">Codiroom</span>.
       </p>
     </footer>
   );
