@@ -6,7 +6,7 @@ export const TESTIMONIALS = [
   { 
     id: 1,
     text: 'Servis cepat dan rapi. Mekaniknya ramah.', 
-    name: 'Andi Kobra' 
+    name: 'BAHLIL' 
   },
   { 
     id: 2,
