@@ -10,3 +10,4 @@ export { default as VehiclesPage } from './VehiclesPage';
 export { default as MaintenancePage } from './MaintenancePage';
 export { default as SchedulePage } from './SchedulePage';
 export { default as HistoryPage } from './HistoryPage';
+export { default as ProposalsPage } from './ProposalsPage';

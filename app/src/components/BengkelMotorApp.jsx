@@ -16,6 +16,7 @@ import {
   MaintenancePage,
   SchedulePage,
   HistoryPage,
+  ProposalsPage, // 👈 1. IMPORT HALAMAN BARU
 } from './pages';
 
 const MODAL_TITLES = {
@@ -235,9 +236,12 @@ const BengkelMotorApp = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        // Pass setActiveTab ke Dashboard biar tombol di Chatbot bisa navigasi
         return <Dashboard onNavigate={setActiveTab} />;
       
+      // 👇 2. TAMBAH CASE INI
+      case 'proposals':
+        return <ProposalsPage />;
+
       case 'services':
         return <ServicesPage onOpenModal={handleOpenModal} />;
       case 'rewards':
@@ -250,12 +254,9 @@ const BengkelMotorApp = () => {
         return <VehiclesPage onOpenModal={handleOpenModal} />;
       
       case 'maintenance':
-        // Ini halaman Admin (Tabel Maintenance)
         return <MaintenancePage onOpenModal={handleOpenModal} />;
         
       case 'schedule':
-        // Ini halaman Customer (Jadwal Servis Saya)
-        // Tombol Chatbot akan mengarah ke sini
         return <SchedulePage />;
         
       case 'history':

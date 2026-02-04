@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./User");
 const Service = require("./Service");
+const Proposal = require("./Proposal");
 
 const Transaction = sequelize.define(
   "Transaction",
@@ -21,6 +22,11 @@ const Transaction = sequelize.define(
     },
     note: {
       type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    // 👇 2. Tambahan Kolom buat Link ke Proposal
+    ProposalId: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
   },
@@ -48,6 +54,17 @@ Transaction.belongsTo(Service, {
 Service.hasMany(Transaction, {
   foreignKey: "ServiceId",
   as: "transactions",
+});
+
+// 👇 3. Tambahan Relasi ke Proposal
+Transaction.belongsTo(Proposal, {
+  foreignKey: "ProposalId",
+  as: "proposal",
+});
+
+Proposal.hasOne(Transaction, {
+  foreignKey: "ProposalId",
+  as: "transaction",
 });
 
 module.exports = Transaction;

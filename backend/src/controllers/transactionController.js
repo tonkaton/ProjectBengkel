@@ -2,6 +2,7 @@ const Transaction = require('../models/Transaction');
 const User = require('../models/User');
 const Service = require('../models/Service');
 const LoyaltyPoint = require('../models/LoyaltyPoint');
+const Proposal = require('../models/Proposal');
 
 exports.getAll = async (req, res) => {
   try {
@@ -18,6 +19,12 @@ exports.getAll = async (req, res) => {
           as: 'service', // ✅ WAJIB: sesuai alias di model
           attributes: ['name', 'price', 'points'], 
           required: false 
+        },
+        {
+          model: Proposal,
+          as: 'proposal',
+          attributes: ['title', 'status', 'grand_total'],
+          required: false
         }
       ],
       order: [['createdAt', 'DESC']]
@@ -39,6 +46,12 @@ exports.getMyTransactions = async (req, res) => {
           as: 'service', // ✅ WAJIB
           attributes: ['name'], 
           required: false 
+        },
+        {
+          model: Proposal,
+          as: 'proposal',
+          attributes: ['title', 'status', 'grand_total'],
+          required: false
         }
       ],
       order: [['createdAt', 'DESC']]

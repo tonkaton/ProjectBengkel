@@ -7,6 +7,7 @@ import {
   transactionService,
   vehicleService,
   maintenanceService,
+  proposalService,
 } from '../services';
 
 const DataContext = createContext(null);
@@ -20,6 +21,7 @@ export const DataProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [maintenance, setMaintenance] = useState([]);
+  const [proposals, setProposals] = useState([]);
 
   const fetchAllData = useCallback(async () => {
     if (!token) return;
@@ -31,12 +33,14 @@ export const DataProvider = ({ children }) => {
         transactionsRes,
         vehiclesRes,
         maintenanceRes,
+        proposalsRes,
       ] = await Promise.all([
         serviceService.getAll(token),
         rewardService.getAll(token),
         transactionService.getAll(token),
         vehicleService.getAll(token),
         maintenanceService.getAll(token),
+        proposalService.getAll(token),
       ]);
 
       setServices(servicesRes.data || []);
@@ -44,6 +48,7 @@ export const DataProvider = ({ children }) => {
       setTransactions(transactionsRes.data || []);
       setVehicles(vehiclesRes.data || []);
       setMaintenance(maintenanceRes.data || []);
+      setProposals(proposalsRes.data || []);
 
       // Fetch customers only for admin
       if (userRole === 'admin') {
@@ -62,7 +67,8 @@ export const DataProvider = ({ children }) => {
     }
   }, [isLoggedIn, fetchAllData]);
 
-  // Service operations
+  // --- EXISTING OPERATIONS (Service, Reward, etc) ---
+  
   const addService = async (serviceData) => {
     try {
       await serviceService.create(serviceData, token);
@@ -93,7 +99,6 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // Reward operations
   const addReward = async (rewardData) => {
     try {
       await rewardService.create(rewardData, token);
@@ -134,7 +139,6 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // Transaction operations
   const addTransaction = async (transactionData) => {
     try {
       await transactionService.create(transactionData, token);
@@ -145,23 +149,33 @@ export const DataProvider = ({ children }) => {
     }
   };
 
- const toggleTransactionStatus = async (id, currentStatus) => {
-  let nextStatus;
+  const toggleTransactionStatus = async (id, currentStatus) => {
+    let nextStatus;
+    if (currentStatus === "Menunggu") nextStatus = "Proses";
+    else if (currentStatus === "Proses") nextStatus = "Selesai";
+    else nextStatus = "Menunggu";
 
-  if (currentStatus === "Menunggu") nextStatus = "Proses";
-  else if (currentStatus === "Proses") nextStatus = "Selesai";
-  else nextStatus = "Menunggu"; // kalau dari selesai balik ke awal
+    try {
+      await transactionService.updateStatus(id, nextStatus, token);
+      await fetchAllData();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
 
-  try {
-    await transactionService.updateStatus(id, nextStatus, token);
-    await fetchAllData();
-    return { success: true };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
+  const deleteTransaction = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus transaksi ini?")) return;
+    try {
+      await transactionService.deleteTransaction(id, token);
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+      await fetchAllData();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
 
-  // Vehicle operations
   const addVehicle = async (vehicleData) => {
     try {
       await vehicleService.create(vehicleData, token);
@@ -172,7 +186,6 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // User operations
   const addUser = async (userData) => {
     try {
       await authService.createUser(userData, token);
@@ -183,7 +196,6 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // Maintenance operations
   const addMaintenance = async (maintenanceData) => {
     try {
       await maintenanceService.create(maintenanceData, token);
@@ -193,18 +205,38 @@ export const DataProvider = ({ children }) => {
       return { success: false, message: error.message };
     }
   };
-const deleteTransaction = async (id) => {
-  if (!window.confirm("Yakin ingin menghapus transaksi ini?")) return;
 
-  try {
-    await transactionService.deleteTransaction(id, token);
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
-    await fetchAllData();
-    return { success: true };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-};
+  const addProposal = async (proposalData) => {
+    try {
+      await proposalService.create(proposalData, token);
+      await fetchAllData();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
+  const acceptProposal = async (id) => {
+    if (!window.confirm("Terima penawaran ini? Transaksi akan otomatis dibuat.")) return;
+    try {
+      await proposalService.accept(id, token);
+      await fetchAllData();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
+  const rejectProposal = async (id) => {
+    if (!window.confirm("Yakin ingin menolak penawaran ini?")) return;
+    try {
+      await proposalService.reject(id, token);
+      await fetchAllData();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
 
   const value = {
     // Data
@@ -214,6 +246,8 @@ const deleteTransaction = async (id) => {
     transactions,
     vehicles,
     maintenance,
+    proposals,
+
     // Operations
     fetchAllData,
     addService,
@@ -229,6 +263,9 @@ const deleteTransaction = async (id) => {
     addUser,
     addMaintenance,
     deleteTransaction,
+    addProposal,   
+    acceptProposal,
+    rejectProposal,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

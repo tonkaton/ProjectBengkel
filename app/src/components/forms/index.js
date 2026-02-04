@@ -4,3 +4,4 @@ export { default as TransactionForm } from './TransactionForm';
 export { default as VehicleForm } from './VehicleForm';
 export { default as UserForm } from './UserForm';
 export { default as MaintenanceForm } from './MaintenanceForm';
+export { default as ProposalForm } from './ProposalForm';

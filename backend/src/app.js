@@ -29,6 +29,7 @@ app.use("/api/transactions", require("./routes/transactionRoutes"));
 app.use("/api/maintenance", require("./routes/maintenanceRoutes"));
 app.use("/api/vehicles", require("./routes/vehiclesRoutes"));
 app.use("/api/rewards", require("./routes/rewardsRoutes"));
+app.use("/api/proposals", require("./routes/proposalRoutes"));
 
 // Root route
 app.get("/", (req, res) => res.json({ message: "API Bengkel Motor OK" }));

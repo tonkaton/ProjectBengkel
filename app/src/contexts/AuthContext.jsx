@@ -20,14 +20,28 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const data = await authService.getCurrentUser(token);
-      setCurrentUser(data.user);
-      setUserRole(data.user.role);
-      setIsLoggedIn(true);
+      // Cek validitas token ke backend
+      const response = await authService.getCurrentUser(token);
+      
+      // Handle variasi struktur response
+      const data = response.data || response;
+      const user = data.user || data; // Kadang backend langsung return user object
+
+      if (user) {
+        setCurrentUser(user);
+        setUserRole(user.role);
+        setIsLoggedIn(true);
+      } else {
+        throw new Error("User data not found");
+      }
     } catch (error) {
       console.error('Auth check error:', error);
+      // Kalau token invalid/expired, bersihkan storage
       sessionStorage.removeItem(STORAGE_KEYS.TOKEN);
       setToken(null);
+      setCurrentUser(null);
+      setUserRole(null);
+      setIsLoggedIn(false);
     } finally {
       setLoading(false);
     }
@@ -39,15 +53,37 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const data = await authService.login(email, password);
-      sessionStorage.setItem(STORAGE_KEYS.TOKEN, data.token);
-      setToken(data.token);
-      setCurrentUser(data.user);
-      setUserRole(data.user.role);
+      const response = await authService.login(email, password);
+      
+      // 👇 DEBUGGING: Liat struktur asli dari backend di Console Browser
+      console.log("LOGIN RESPONSE DEBUG:", response); 
+
+      // 👇 LOGIC ROBOH (Robust): Cari token di berbagai kemungkinan lokasi
+      // 1. Cek apakah response punya property 'data' (standar Axios)
+      const data = response.data || response;
+      
+      // 2. Ambil token & user
+      const accessToken = data.token || data.data?.token; 
+      const user = data.user || data.data?.user;
+
+      if (!accessToken) {
+        console.error("Token missing in response:", data);
+        throw new Error("Token tidak ditemukan dalam respon server.");
+      }
+
+      // Simpan data valid
+      sessionStorage.setItem(STORAGE_KEYS.TOKEN, accessToken);
+      setToken(accessToken);
+      setCurrentUser(user);
+      setUserRole(user?.role);
       setIsLoggedIn(true);
+      
       return { success: true };
+
     } catch (error) {
-      return { success: false, message: error.message || 'Login gagal' };
+      console.error("Login Process Error:", error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login gagal';
+      return { success: false, message: errorMessage };
     }
   };
 
