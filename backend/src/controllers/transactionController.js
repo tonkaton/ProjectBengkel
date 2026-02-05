@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Service = require('../models/Service');
 const LoyaltyPoint = require('../models/LoyaltyPoint');
 const Proposal = require('../models/Proposal');
+const generateQueueNumber = require('../utils/queueGenerator');
 
 exports.getAll = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ exports.getAll = async (req, res) => {
         },
         { 
           model: Service, 
-          as: 'service', // ✅ WAJIB: sesuai alias di model
+          as: 'service', 
           attributes: ['name', 'price', 'points'], 
           required: false 
         },
@@ -43,7 +44,7 @@ exports.getMyTransactions = async (req, res) => {
       include: [
         { 
           model: Service, 
-          as: 'service', // ✅ WAJIB
+          as: 'service', 
           attributes: ['name'], 
           required: false 
         },
@@ -77,13 +78,17 @@ exports.create = async (req, res) => {
       return res.status(404).json({ message: 'Layanan tidak ditemukan' });
     }
 
+    // 👇 2. Generate Nomor Antrian Baru
+    const newQueueNumber = await generateQueueNumber();
+
     const t = await Transaction.create({ 
       UserId, 
       ServiceId, 
       amount: amount || service.price, 
       points_earned: points_earned || service.points, 
       status: status || 'Menunggu', 
-      note 
+      note,
+      queue_number: newQueueNumber // 👇 3. Simpan ke Database
     });
 
     res.status(201).json({ data: t });
@@ -108,7 +113,7 @@ exports.updateStatus = async (req, res) => {
       include: [
         { 
           model: Service, 
-          as: 'service', // ✅ WAJIB
+          as: 'service', 
           attributes: ['name'], 
           required: false 
         }

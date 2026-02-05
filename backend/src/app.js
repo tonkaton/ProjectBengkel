@@ -21,7 +21,7 @@ app.use(
 );
 app.use(express.json()); // Parse JSON body
 
-// Routes yang udah ada
+// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/services", require("./routes/serviceRoutes"));
 app.use("/api/push", require("./routes/pushRoutes"));
@@ -30,6 +30,7 @@ app.use("/api/maintenance", require("./routes/maintenanceRoutes"));
 app.use("/api/vehicles", require("./routes/vehiclesRoutes"));
 app.use("/api/rewards", require("./routes/rewardsRoutes"));
 app.use("/api/proposals", require("./routes/proposalRoutes"));
+app.use("/api/bookings", require("./routes/bookingRoutes"));
 
 // Root route
 app.get("/", (req, res) => res.json({ message: "API Bengkel Motor OK" }));

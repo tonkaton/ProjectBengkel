@@ -6,3 +6,4 @@ export { default as transactionService } from './transactionService';
 export { default as vehicleService } from './vehicleService';
 export { default as maintenanceService } from './maintenanceService';
 export { default as proposalService } from './proposalService';
+export { default as bookingService } from './bookingService';

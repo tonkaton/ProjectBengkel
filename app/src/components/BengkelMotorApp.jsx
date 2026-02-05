@@ -16,7 +16,8 @@ import {
   MaintenancePage,
   SchedulePage,
   HistoryPage,
-  ProposalsPage, // 👈 1. IMPORT HALAMAN BARU
+  ProposalsPage,
+  BookingsPage, // 👈 1. IMPORT HALAMAN BOOKING
 } from './pages';
 
 const MODAL_TITLES = {
@@ -238,9 +239,12 @@ const BengkelMotorApp = () => {
       case 'dashboard':
         return <Dashboard onNavigate={setActiveTab} />;
       
-      // 👇 2. TAMBAH CASE INI
       case 'proposals':
         return <ProposalsPage />;
+
+      // 👇 2. TAMBAH CASE INI (Sesuai 'tab' di menuItems.js)
+      case 'bookings':
+        return <BookingsPage />;
 
       case 'services':
         return <ServicesPage onOpenModal={handleOpenModal} />;

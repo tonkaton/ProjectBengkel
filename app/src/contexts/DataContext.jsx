@@ -8,6 +8,7 @@ import {
   vehicleService,
   maintenanceService,
   proposalService,
+  bookingService, // 👈 1. IMPORT SERVICE BARU
 } from '../services';
 
 const DataContext = createContext(null);
@@ -22,6 +23,7 @@ export const DataProvider = ({ children }) => {
   const [vehicles, setVehicles] = useState([]);
   const [maintenance, setMaintenance] = useState([]);
   const [proposals, setProposals] = useState([]);
+  const [bookings, setBookings] = useState([]); // 👈 2. STATE BARU
 
   const fetchAllData = useCallback(async () => {
     if (!token) return;
@@ -50,11 +52,19 @@ export const DataProvider = ({ children }) => {
       setMaintenance(maintenanceRes.data || []);
       setProposals(proposalsRes.data || []);
 
-      // Fetch customers only for admin
+      // Fetch customers & bookings only for admin
       if (userRole === 'admin') {
         const customersRes = await authService.getUsers(token);
         const users = Array.isArray(customersRes) ? customersRes : [];
         setCustomers(users.filter((u) => u.role === 'user'));
+
+        // 👇 3. FETCH BOOKING (ADMIN ONLY)
+        try {
+          const bookingsRes = await bookingService.getAll(token);
+          setBookings(bookingsRes.data || []);
+        } catch (err) {
+          console.error("Gagal ambil booking:", err);
+        }
       }
     } catch (error) {
       console.error('Fetch error:', error);
@@ -238,6 +248,17 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // 👇 4. FUNCTION PROSES BOOKING (LOGIC BARU)
+  const processBooking = async (id, data) => {
+    try {
+      await bookingService.process(id, data, token);
+      await fetchAllData(); // Refresh Data (Booking jadi Processed, Transaksi Nambah)
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
   const value = {
     // Data
     services,
@@ -247,6 +268,7 @@ export const DataProvider = ({ children }) => {
     vehicles,
     maintenance,
     proposals,
+    bookings, // 👈 5. EXPORT STATE
 
     // Operations
     fetchAllData,
@@ -266,6 +288,7 @@ export const DataProvider = ({ children }) => {
     addProposal,   
     acceptProposal,
     rejectProposal,
+    processBooking, // 👈 6. EXPORT FUNCTION
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

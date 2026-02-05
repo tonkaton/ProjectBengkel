@@ -24,7 +24,12 @@ const Transaction = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    // 👇 2. Tambahan Kolom buat Link ke Proposal
+    // 👇 KOLOM BARU: Nomor Antrian (Format: YYYYMMDD-XXX)
+    queue_number: {
+      type: DataTypes.STRING,
+      allowNull: true, // Boleh kosong (untuk data lama atau draft)
+    },
+    // 👇 Link ke Proposal (Fitur yang sudah ada)
     ProposalId: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -35,6 +40,8 @@ const Transaction = sequelize.define(
     timestamps: true,
   },
 );
+
+// --- RELASI (TIDAK BERUBAH) ---
 
 Transaction.belongsTo(User, {
   foreignKey: "UserId",
@@ -56,7 +63,6 @@ Service.hasMany(Transaction, {
   as: "transactions",
 });
 
-// 👇 3. Tambahan Relasi ke Proposal
 Transaction.belongsTo(Proposal, {
   foreignKey: "ProposalId",
   as: "proposal",

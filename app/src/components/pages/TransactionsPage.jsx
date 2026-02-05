@@ -8,7 +8,7 @@ import { TransactionRow } from "../common";
 
 const TransactionsPage = ({ onOpenModal }) => {
   const { isAdmin } = useAuth();
- const { transactions, toggleTransactionStatus, deleteTransaction } = useData();
+  const { transactions, toggleTransactionStatus, deleteTransaction } = useData();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
@@ -23,8 +23,9 @@ const TransactionsPage = ({ onOpenModal }) => {
       const matchSearch =
         String(t.UserId).toLowerCase().includes(keyword) ||
         t.note?.toLowerCase().includes(keyword) ||
-        t.status?.toLowerCase().includes(keyword) || // <- status termasuk "menunggu"
+        t.status?.toLowerCase().includes(keyword) || 
         String(t.amount).includes(keyword) ||
+        String(t.queue_number).toLowerCase().includes(keyword) || // 👈 Tambah search by Queue
         String(t.id).includes(keyword);
 
       const matchDate = filterDate
@@ -42,10 +43,11 @@ const TransactionsPage = ({ onOpenModal }) => {
     currentPage * itemsPerPage
   );
 
-  // 📥 EXPORT EXCEL
+  // 📥 EXPORT EXCEL (UPDATE)
   const handleExportExcel = () => {
     const dataExport = filteredTransactions.map((t) => ({
       ID: t.id,
+      Antrian: t.queue_number || "-", // 👈 Tambah Kolom Antrian
       Name: t.UserId,
       Tanggal: new Date(t.createdAt).toLocaleString(),
       Catatan: t.note || "-",
@@ -71,18 +73,18 @@ const TransactionsPage = ({ onOpenModal }) => {
     );
   };
 
-  // 🖨 PRINT
+  // 🖨 PRINT (UPDATE)
   const handlePrint = () => {
     const rows = filteredTransactions
       .map(
         (t) => `
         <tr>
           <td>${t.id}</td>
-          <td>${t.UserId}</td>
+          <td style="font-weight:bold; color:blue;">${t.queue_number || "-"}</td> <td>${t.UserId}</td>
           <td>${new Date(t.createdAt).toLocaleString()}</td>
           <td>${t.note || "-"}</td>
           <td>${t.status || "menunggu"}</td>
-          <td>Rp ${Number(t.amount).toLocaleString()}</td>
+          <td>Rp ${Number(t.amount).toLocaleString('id-ID')}</td>
           <td>${t.points_earned}</td>
         </tr>`
       )
@@ -104,7 +106,7 @@ const TransactionsPage = ({ onOpenModal }) => {
           <table>
             <tr>
               <th>ID</th>
-              <th>User ID</th>
+              <th>Antrian</th> <th>User ID</th>
               <th>Tanggal</th>
               <th>Catatan</th>
               <th>Status</th>
@@ -141,7 +143,7 @@ const TransactionsPage = ({ onOpenModal }) => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
-              placeholder="Cari UserID, catatan, status..."
+              placeholder="Cari ID, User, Antrian..." // 👈 Update placeholder
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -172,54 +174,50 @@ const TransactionsPage = ({ onOpenModal }) => {
       {paginatedTransactions.length === 0 ? (
         <p className="text-gray-400 text-center py-10">Tidak ada transaksi ditemukan</p>
       ) : (
-        paginatedTransactions.map((t) => (
-         <TransactionRow
-           key={t.id} transaction={{ ...t, status: t.status || "Menunggu" }}
-           onToggleStatus={toggleTransactionStatus}
-           onDelete={deleteTransaction}/>
-        ))
+        <div className="space-y-4"> {/* 👈 Wrapper biar rapi */}
+            {paginatedTransactions.map((t) => (
+            <TransactionRow
+                key={t.id} 
+                transaction={{ ...t, status: t.status || "Menunggu" }}
+                onToggleStatus={toggleTransactionStatus}
+                onDelete={deleteTransaction}
+            />
+            ))}
+        </div>
       )}
 
       {/* PAGINATION */}
-{totalPages > 1 && (
-  <div className="flex justify-center items-center gap-2 pt-4">
-
-    {/* PREV BUTTON */}
-    <button
-      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-      disabled={currentPage === 1}
-      className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
-    >
-      Prev
-    </button>
-
-    {/* PAGE NUMBERS */}
-    {Array.from({ length: totalPages }, (_, i) => (
-      <button
-        key={i}
-        onClick={() => setCurrentPage(i + 1)}
-        className={`px-3 py-1 rounded-lg border ${
-          currentPage === i + 1
-            ? "bg-yellow-500 text-black border-yellow-500 font-bold"
-            : "bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
-        }`}
-      >
-        {i + 1}
-      </button>
-    ))}
-
-    {/* NEXT BUTTON */}
-    <button
-      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-      disabled={currentPage === totalPages}
-      className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
-    >
-      Next
-    </button>
-
-  </div>
-)}
-
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 pt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+          >
+            Prev
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 rounded-lg border ${
+                currentPage === i + 1
+                  ? "bg-yellow-500 text-black border-yellow-500 font-bold"
+                  : "bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

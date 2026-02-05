@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bike } from 'lucide-react';
+import { Bike, Ticket } from 'lucide-react'; // 👈 Tambah icon Ticket
 import { useAuth } from '../../contexts';
 import { formatRupiah, formatDateTime } from '../../utils/formatters';
 
@@ -12,23 +12,19 @@ const TransactionRow = ({
 }) => {
   const { isAdmin } = useAuth();
 
-  // 1. Logic Nama Customer
+  // Logic Nama
   const customerName = transaction.User?.name || transaction.customer?.name || transaction.owner?.name || 'Customer';
-
-  // 2. Logic Nama Servis
   const serviceName = transaction.Service?.name || transaction.service?.name || transaction.note || 'Servis Rutin';
 
-  // 3. Logic Judul UX
   const mainTitle = isAdmin ? customerName : serviceName;
   const subTitle = isAdmin ? serviceName : (transaction.note || 'Perawatan Kendaraan');
 
-  // [LOGIC BARU] Tentukan Tanggal yang Ditampilkan
-  // Kalau Status 'Selesai' -> Pakai updatedAt (Kapan duit masuk/beres)
-  // Kalau Belum -> Pakai createdAt (Kapan order dibuat)
+  // Logic Tanggal (CreatedAt vs UpdatedAt)
   const displayDate = transaction.status === 'Selesai' 
     ? transaction.updatedAt 
     : transaction.createdAt;
 
+  // Warna Status
   const getStatusColor = (status) => {
     switch (status) {
       case 'Selesai': return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
@@ -43,12 +39,24 @@ const TransactionRow = ({
 
       {/* LEFT: ICON & DETAILS */}
       <div className="flex items-center gap-4 min-w-0 flex-1">
-        <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-900/20 flex-shrink-0 border border-red-500/20">
-          <Bike className="w-6 h-6 text-white" />
+        
+        {/* ICON WRAPPER (Sekarang pake Relative biar bisa tempel badge) */}
+        <div className="relative">
+            <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-900/20 flex-shrink-0 border border-red-500/20">
+              <Bike className="w-6 h-6 text-white" />
+            </div>
+            
+            {/* 🔥 BADGE ANTRIAN (Muncul kalau ada queue_number) */}
+            {transaction.queue_number && (
+                <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-blue-400 shadow-sm flex items-center gap-1 z-10">
+                    <Ticket className="w-3 h-3" />
+                    {transaction.queue_number}
+                </div>
+            )}
         </div>
 
         <div className="min-w-0">
-          <h4 className="text-white font-bold truncate text-base">
+          <h4 className="text-white font-bold truncate text-base flex items-center gap-2">
             {mainTitle}
           </h4>
           
@@ -58,7 +66,6 @@ const TransactionRow = ({
             </span>
           </p>
 
-          {/* TANGGAL MOBILE (Pake displayDate) */}
           <p className="text-[10px] text-zinc-500 mt-0.5 sm:hidden">
             {formatDateTime(displayDate)}
           </p>
@@ -68,22 +75,24 @@ const TransactionRow = ({
       {/* RIGHT: AMOUNT & ACTIONS */}
       <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 sm:gap-1 min-w-[140px]">
 
-        <p className="font-mono font-bold text-lg text-white tracking-tight">
+        {/* HARGA */}
+        <p className={`font-mono font-bold text-lg tracking-tight ${parseInt(transaction.amount) === 0 ? 'text-zinc-500' : 'text-white'}`}>
           {formatRupiah(transaction.amount)}
         </p>
 
+        {/* STATUS */}
         <div className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${getStatusColor(transaction.status)}`}>
           {transaction.status || 'Menunggu'}
         </div>
 
-        {/* TANGGAL DESKTOP (Pake displayDate) */}
+        {/* TANGGAL DESKTOP */}
         <p className="text-[10px] text-zinc-500 hidden sm:block mt-1">
           +{transaction.points_earned} XP • {formatDateTime(displayDate)}
         </p>
 
         {isAdmin && (
           <div className="flex gap-2 mt-2">
-            {showStatusButton && onToggleStatus && (
+             {showStatusButton && onToggleStatus && (
               <button
                 onClick={() => onToggleStatus(transaction.id, transaction.status)}
                 className="text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-200 px-3 py-1.5 rounded-lg transition border border-zinc-600"

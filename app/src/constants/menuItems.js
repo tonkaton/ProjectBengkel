@@ -8,10 +8,12 @@ import {
   Clock,
   Bike,
   FileText,
+  CalendarDays,
 } from 'lucide-react';
 
 export const adminMenuItems = [
   { icon: Home, label: 'Dashboard', tab: 'dashboard' },
+  { icon: CalendarDays, label: 'Booking Masuk', tab: 'bookings' },
   { icon: FileText, label: 'Project Custom', tab: 'proposals' },
   { icon: DollarSign, label: 'Transaksi', tab: 'transactions' },
   { icon: Calendar, label: 'Maintenance', tab: 'maintenance' },
