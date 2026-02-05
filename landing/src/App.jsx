@@ -4,14 +4,11 @@ import {
   About,
   Services,
   Testimonials,
+  Booking,   
   Contact,
   Footer,
 } from './components';
 
-/**
- * Main App component
- * Landing page for Sintink Garage Performance
- */
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans scroll-smooth">
@@ -20,6 +17,7 @@ export default function App() {
       <main className="flex-grow">
         <About />
         <Services />
+        <Booking />     
         <Testimonials />
         <Contact />
       </main>

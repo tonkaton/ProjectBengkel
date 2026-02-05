@@ -3,7 +3,6 @@ import { Calendar, Plus, Search } from 'lucide-react';
 import { useAuth, useData } from '../../contexts';
 import { MaintenanceCard } from '../common';
 import { Button } from '../ui';
-import { API_URL } from '../../constants'; // [UPDATE] Import API_URL buat fetch manual
 
 const ITEMS_PER_PAGE = 10;
 
@@ -13,34 +12,11 @@ const MaintenancePage = ({ onOpenModal }) => {
 
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const handleDelete = async (id) => {
-    try {
-      const token = sessionStorage.getItem('token'); // Ambil token dari session
-      
-      const response = await fetch(`${API_URL}/maintenance/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Gagal menghapus data dari server');
-      }
-      
-      // Reload simpel biar data ke-refresh otomatis
-      window.location.reload(); 
-    } catch (error) {
-      console.error('Gagal menghapus:', error);
-      alert('Gagal menghapus jadwal. Pastikan server berjalan dan token valid.');
-    }
-  };
 
   // 🔍 FILTER DATA
   const filteredMaintenance = useMemo(() => {
     return maintenance.filter((m) =>
-      `${m.customer?.name || ''} ${m.owner?.name || ''} ${m.vehicle || ''} ${m.note || ''}`
+      `${m.customer?.name} ${m.vehicle || ''} ${m.note || ''}`
         .toLowerCase()
         .includes(search.toLowerCase())
     );
@@ -79,7 +55,7 @@ const MaintenancePage = ({ onOpenModal }) => {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                setCurrentPage(1);
+                setCurrentPage(1); // reset page saat search
               }}
               className="bg-zinc-800 text-white pl-9 pr-4 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-yellow-500 w-64"
             />
@@ -105,11 +81,7 @@ const MaintenancePage = ({ onOpenModal }) => {
       ) : (
         <div className="space-y-4">
           {paginatedData.map((m) => (
-            <MaintenanceCard 
-                key={m.id} 
-                item={m} 
-                onDelete={handleDelete}
-            />
+            <MaintenanceCard key={m.id} item={m} />
           ))}
         </div>
       )}
@@ -120,8 +92,7 @@ const MaintenancePage = ({ onOpenModal }) => {
           <button
             onClick={() => goToPage(currentPage - 1)}
             className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
-            disabled={currentPage === 1}
-          >
+            disabled={currentPage === 1}>
             Prev
           </button>
 
