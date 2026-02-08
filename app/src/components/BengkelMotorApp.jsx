@@ -17,7 +17,8 @@ import {
   SchedulePage,
   HistoryPage,
   ProposalsPage,
-  BookingsPage, // 👈 1. IMPORT HALAMAN BOOKING
+  BookingsPage,
+  PointsHistoryPage,
 } from './pages';
 
 const MODAL_TITLES = {
@@ -242,7 +243,6 @@ const BengkelMotorApp = () => {
       case 'proposals':
         return <ProposalsPage />;
 
-      // 👇 2. TAMBAH CASE INI (Sesuai 'tab' di menuItems.js)
       case 'bookings':
         return <BookingsPage />;
 
@@ -266,6 +266,9 @@ const BengkelMotorApp = () => {
       case 'history':
         return <HistoryPage />;
         
+      case 'points_history':
+        return <PointsHistoryPage />;
+
       default:
         return <Dashboard onNavigate={setActiveTab} />;
     }

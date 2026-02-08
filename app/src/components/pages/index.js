@@ -12,3 +12,4 @@ export { default as SchedulePage } from './SchedulePage';
 export { default as HistoryPage } from './HistoryPage';
 export { default as ProposalsPage } from './ProposalsPage';
 export { default as BookingsPage } from './BookingsPage';
+export { default as PointsHistoryPage } from './PointsHistoryPage';

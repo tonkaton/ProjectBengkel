@@ -4,6 +4,7 @@ const admin = require('../middleware/adminMiddleware');
 const c = require('../controllers/rewardController');
 
 r.get('/', auth, c.getAll);
+r.get('/history', auth, c.getHistory); 
 r.post('/', auth, admin, c.create);
 r.put('/:id', auth, admin, c.update);
 r.delete('/:id', auth, admin, c.remove);

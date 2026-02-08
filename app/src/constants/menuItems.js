@@ -21,6 +21,7 @@ export const adminMenuItems = [
   { icon: Users, label: 'Pelanggan', tab: 'customers' },
   { icon: Bike, label: 'Kendaraan', tab: 'vehicles' },
   { icon: Gift, label: 'Reward', tab: 'rewards' },
+  { icon: Clock, label: 'Riwayat Poin', tab: 'points_history' }, 
 ];
 
 export const customerMenuItems = [
