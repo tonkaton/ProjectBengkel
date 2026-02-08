@@ -1,0 +1,20 @@
+{
+  "name": "projectbengkel-root",
+  "version": "1.0.0",
+  "description": "Pengendali Frontend (App + Landing)",
+  "main": "index.js",
+  "scripts": {
+    "dev:fe": "concurrently -n \"APP,LANDING\" -c \"bgBlue.bold,bgGreen.bold\" \"npm:app\" \"npm:landing\"",
+    
+    "app": "cd app && npm run dev",
+    "landing": "cd landing && npm run dev",
+    
+    "dev:be": "cd backend && npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

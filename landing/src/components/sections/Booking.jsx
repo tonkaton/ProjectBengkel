@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Container } from '../layout';
 import { Card, Button } from '../ui';
 
-// Variable API_URL sudah mengandung "/api" (sesuai env lu)
+// Variable API_URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Booking() {
@@ -12,7 +12,7 @@ export default function Booking() {
     vehicle: '',
     service: '', 
     date: '',
-    time: '',
+    time: '', // 👈 TETAP PERTAHANKAN INI
     complaint: ''
   });
 
@@ -20,11 +20,10 @@ export default function Booking() {
   const [loading, setLoading] = useState(false);
   const [servicesList, setServicesList] = useState([]); 
 
-  // 👇 1. FETCH LAYANAN DARI BACKEND
+  // 1. FETCH LAYANAN
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        // HAPUS "/api" manual, karena API_URL sudah bawa "/api"
         const res = await fetch(`${API_URL}/services`); 
         const data = await res.json();
         
@@ -43,7 +42,7 @@ export default function Booking() {
   };
 
   const handleBooking = async () => {
-    // Validasi Input
+    // Validasi Tetap Wajib Ada Jam
     if (!form.name || !form.phone || !form.vehicle || !form.date || !form.time || !form.service) {
       alert('Mohon lengkapi data booking (Nama, HP, Motor, Layanan, Tgl, Jam)');
       return;
@@ -57,10 +56,10 @@ export default function Booking() {
         motor_type: form.vehicle,   
         service_type: form.service, 
         booking_date: form.date,    
-        complaint: `Jam: ${form.time}. Keluhan: ${form.complaint || '-'}` 
+        // 👇 Masukkan jam ke note/complaint agar admin terbantu
+        complaint: `[JAM KEDATANGAN: ${form.time}] - ${form.complaint || '-'}` 
       };
 
-      // 👇 2. POST BOOKING KE BACKEND
       const res = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,7 +70,6 @@ export default function Booking() {
 
       if (!res.ok) throw new Error(data.message || 'Gagal booking');
 
-      // Simpan hasil response (isi data ada id, booking_queue, dll)
       setBookingResult(data.data); 
 
     } catch (err) {
@@ -87,7 +85,7 @@ export default function Booking() {
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-3">Booking Servis Online</h2>
           <p className="text-gray-400">
-            Daftar sekarang, admin kami akan segera memproses jadwal Anda.
+            Pilih jadwal kedatangan Anda. Admin akan memproses antrian.
           </p>
         </div>
 
@@ -102,23 +100,24 @@ export default function Booking() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">Booking Berhasil!</h3>
               <p className="text-gray-300 mb-6">
-                Data Anda telah kami terima. Tunjukkan nomor antrian ini ke admin saat datang ke bengkel.
+                Data Anda telah kami terima.
               </p>
               
-              {/* 👇 TAMPILAN TIKET ANTRIAN */}
               <div className="bg-zinc-800 rounded-lg p-6 max-w-sm mx-auto mb-8 border border-zinc-700 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
                 
-                <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2 font-semibold">Nomor Antrian Booking</p>
+                {/* 👇 GANTI LABEL BIAR GAK MISLEADING */}
+                <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2 font-semibold">Kode Booking / ID Antrian</p>
                 
-                {/* 🔥 MENAMPILKAN QUEUE DARI BACKEND (Contoh: 20260210-001) */}
                 <div className="text-4xl font-mono font-bold text-yellow-400 tracking-wider">
                   {bookingResult.booking_queue || `#${bookingResult.id}`}
                 </div>
                 
-                <p className="text-xs text-zinc-600 mt-2">
-                  Tanggal: {bookingResult.booking_date}
-                </p>
+                <div className="mt-4 pt-4 border-t border-zinc-700 flex justify-between text-xs text-zinc-400">
+                    <span>Tanggal: {bookingResult.booking_date}</span>
+                    {/* Kalau bisa ambil balik jamnya dari state form atau result */}
+                    <span>Jam: {form.time}</span> 
+                </div>
               </div>
 
               <Button 
@@ -137,7 +136,7 @@ export default function Booking() {
                 <input name="phone" placeholder="No HP / WhatsApp" value={form.phone} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
                 <input name="vehicle" placeholder="Motor (Contoh: Vario 160)" value={form.vehicle} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
                 
-                {/* 👇 DROPDOWN DINAMIS + HARGA */}
+                {/* DROPDOWN DINAMIS */}
                 <div className="relative">
                   <select 
                     name="service" 
@@ -146,7 +145,6 @@ export default function Booking() {
                     className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 text-white appearance-none focus:outline-none focus:border-yellow-500"
                   >
                     <option value="">-- Pilih Layanan --</option>
-                    
                     {servicesList.length > 0 ? (
                       servicesList.map((svc) => (
                         <option key={svc.id} value={svc.name}>
@@ -154,19 +152,15 @@ export default function Booking() {
                         </option>
                       ))
                     ) : (
-                      // Fallback kalau DB masih kosong/loading
-                      <>
-                        <option>Servis Ringan</option>
-                        <option>Servis Berat</option>
-                        <option>Ganti Oli</option>
-                        <option>Servis CVT</option>
-                      </>
+                       <option>Loading...</option>
                     )}
                   </select>
                   <div className="absolute right-3 top-3.5 pointer-events-none text-gray-400">▼</div>
                 </div>
 
                 <input type="date" name="date" value={form.date} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
+                
+                {/* 👇 JAM TETAP ADA */}
                 <input type="time" name="time" value={form.time} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
               </div>
 
@@ -183,15 +177,7 @@ export default function Booking() {
                 className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02]"
                 disabled={loading}
               >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sedang Memproses...
-                  </span>
-                ) : 'Kirim Booking'}
+                {loading ? 'Sedang Memproses...' : 'Kirim Booking'}
               </Button>
             </>
           )}

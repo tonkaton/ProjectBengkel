@@ -1,6 +1,5 @@
 .docker/mysql/data
-
-# Environment variables
+node_modules/
 .env
 .env.local
 .env.*.local
