@@ -1008,7 +1008,7 @@ netstat -tulpn               # Port usage
 
 ## Selamat! 🎉
 
-Project Bengkel Anda sekarang sudah live di production!
+Project Bengkel sekarang sudah live di production!
 
 **URLs:**
 
@@ -1023,4 +1023,4 @@ Jangan lupa untuk:
 3. Update dependencies secara berkala
 4. Monitor logs untuk issues
 
-Good luck! 🚀
+
