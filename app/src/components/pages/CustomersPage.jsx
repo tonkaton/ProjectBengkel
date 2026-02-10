@@ -1,10 +1,16 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useData } from '../../contexts';
 import { Button } from '../ui';
 
 const CustomersPage = ({ onOpenModal }) => {
-  const { customers } = useData();
+  const { customers, deleteCustomer } = useData();
+
+  const handleDelete = (id) => {
+    if (confirm('Yakin hapus pelanggan ini?')) {
+      deleteCustomer(id);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -18,6 +24,7 @@ const CustomersPage = ({ onOpenModal }) => {
           Tambah Pelanggan
         </Button>
       </div>
+
       {customers.map((c) => (
         <div
           key={c.id}
@@ -27,7 +34,16 @@ const CustomersPage = ({ onOpenModal }) => {
             <h4 className="text-white font-bold">{c.name}</h4>
             <p className="text-gray-400 text-sm">{c.email}</p>
           </div>
-          <div className="text-yellow-500 font-bold">{c.role}</div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-500 font-bold">{c.role}</span>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => handleDelete(c.id)}>
+               <Trash2 className="w-4 h-4 text-white" />
+            </Button>
+          </div>
         </div>
       ))}
     </div>
