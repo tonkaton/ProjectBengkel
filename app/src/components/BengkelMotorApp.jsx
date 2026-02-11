@@ -29,6 +29,7 @@ const MODAL_TITLES = {
   addTransaction: 'Tambah Transaksi',
   addVehicle: 'Tambah Motor',
   addUser: 'Tambah Pelanggan',
+  editUser: 'Edit Data Pelanggan', // 👈 JUDUL BARU
   addMaintenance: 'Tambah Jadwal Maintenance',
 };
 
@@ -45,6 +46,7 @@ const BengkelMotorApp = () => {
     addTransaction,
     addVehicle,
     addUser,
+    updateCustomer, // 👈 IMPORT FUNGSI UPDATE CUSTOMER
     addMaintenance,
   } = useData();
 
@@ -54,9 +56,22 @@ const BengkelMotorApp = () => {
 
   const handleOpenModal = (type, item = null) => {
     if (item) {
-      setFormData(item);
+      // 💡 LOGIC KHUSUS SAAT EDIT USER
+      if (type === 'editUser') {
+        setFormData({
+            ...item,
+            password: '', // Password dikosongkan saat edit biar aman
+        });
+      } else {
+        setFormData(item);
+      }
     } else {
-      resetForm({});
+      // 💡 RESET FORM SAAT TAMBAH BARU
+      if (type === 'addUser') {
+          resetForm({ role: 'user' }); // Default role user
+      } else {
+          resetForm({});
+      }
     }
     openModal(type, item);
   };
@@ -130,12 +145,19 @@ const BengkelMotorApp = () => {
     }
   };
 
+  // 👇 LOGIC BARU: BISA ADD ATAU UPDATE USER
   const handleUserSubmit = async () => {
-    const result = await addUser(form);
+    const isEditing = modalType === 'editUser';
+    
+    const result = isEditing 
+        ? await updateCustomer(editingItem.id, form)
+        : await addUser(form);
+
     if (result.success) {
       handleCloseModal();
+      alert(isEditing ? 'Data user berhasil diperbarui!' : 'User baru berhasil ditambahkan!');
     } else {
-      alert(result.message || 'Gagal tambah pelanggan');
+      alert(result.message || 'Gagal menyimpan data pelanggan');
     }
   };
 
@@ -207,13 +229,15 @@ const BengkelMotorApp = () => {
       );
     }
 
-    if (modalType === 'addUser') {
+    // 👇 LOGIC FORM USER YANG BARU
+    if (modalType === 'addUser' || modalType === 'editUser') {
       return (
         <UserForm
           form={form}
           onChange={handleChange}
           onSubmit={handleUserSubmit}
           onCancel={handleCloseModal}
+          isEdit={modalType === 'editUser'} // 👈 Pass prop isEdit
         />
       );
     }
@@ -253,7 +277,7 @@ const BengkelMotorApp = () => {
       case 'transactions':
         return <TransactionsPage onOpenModal={handleOpenModal} />;
       case 'customers':
-        return <CustomersPage onOpenModal={handleOpenModal} />;
+        return <CustomersPage onOpenModal={handleOpenModal} />; // 👈 Sudah siap terima editUser
       case 'vehicles':
         return <VehiclesPage onOpenModal={handleOpenModal} />;
       

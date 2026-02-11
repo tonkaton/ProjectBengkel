@@ -5,7 +5,6 @@ export const authService = {
     return api.post('/auth/login', { email, password });
   },
 
-  // 👇 PERBAIKAN: Langsung kirim token (string), bukan object headers
   getCurrentUser: async (token) => {
     return api.get('/auth/me', token);
   },
@@ -16,6 +15,14 @@ export const authService = {
 
   createUser: async (userData, token) => {
     return api.post('/auth/users', userData, token);
+  },
+
+  deleteUser: async (id, token) => {
+    return api.delete(`/auth/users/${id}`, token);
+  },
+
+  updateUser: async (id, userData, token) => {
+    return api.put(`/auth/users/${id}`, userData, token);
   },
 };
 

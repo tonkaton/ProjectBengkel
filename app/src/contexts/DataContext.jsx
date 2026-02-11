@@ -8,7 +8,7 @@ import {
   vehicleService,
   maintenanceService,
   proposalService,
-  bookingService, // 👈 1. IMPORT SERVICE BARU
+  bookingService,
 } from '../services';
 
 const DataContext = createContext(null);
@@ -23,7 +23,7 @@ export const DataProvider = ({ children }) => {
   const [vehicles, setVehicles] = useState([]);
   const [maintenance, setMaintenance] = useState([]);
   const [proposals, setProposals] = useState([]);
-  const [bookings, setBookings] = useState([]); // 👈 2. STATE BARU
+  const [bookings, setBookings] = useState([]);
 
   const fetchAllData = useCallback(async () => {
     if (!token) return;
@@ -52,13 +52,11 @@ export const DataProvider = ({ children }) => {
       setMaintenance(maintenanceRes.data || []);
       setProposals(proposalsRes.data || []);
 
-      // Fetch customers & bookings only for admin
       if (userRole === 'admin') {
         const customersRes = await authService.getUsers(token);
         const users = Array.isArray(customersRes) ? customersRes : [];
         setCustomers(users.filter((u) => u.role === 'user'));
 
-        // 👇 3. FETCH BOOKING (ADMIN ONLY)
         try {
           const bookingsRes = await bookingService.getAll(token);
           setBookings(bookingsRes.data || []);
@@ -77,8 +75,7 @@ export const DataProvider = ({ children }) => {
     }
   }, [isLoggedIn, fetchAllData]);
 
-  // --- EXISTING OPERATIONS (Service, Reward, etc) ---
-  
+  // --- SERVICE ---
   const addService = async (serviceData) => {
     try {
       await serviceService.create(serviceData, token);
@@ -109,6 +106,7 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // --- REWARD ---
   const addReward = async (rewardData) => {
     try {
       await rewardService.create(rewardData, token);
@@ -149,6 +147,7 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // --- TRANSACTION ---
   const addTransaction = async (transactionData) => {
     try {
       await transactionService.create(transactionData, token);
@@ -160,11 +159,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const toggleTransactionStatus = async (id, currentStatus) => {
-    let nextStatus;
-    if (currentStatus === "Menunggu") nextStatus = "Proses";
-    else if (currentStatus === "Proses") nextStatus = "Selesai";
-    else nextStatus = "Menunggu";
-
+    let nextStatus = currentStatus === "Menunggu" ? "Proses" : currentStatus === "Proses" ? "Selesai" : "Menunggu";
     try {
       await transactionService.updateStatus(id, nextStatus, token);
       await fetchAllData();
@@ -178,7 +173,6 @@ export const DataProvider = ({ children }) => {
     if (!window.confirm("Yakin ingin menghapus transaksi ini?")) return;
     try {
       await transactionService.deleteTransaction(id, token);
-      setTransactions((prev) => prev.filter((t) => t.id !== id));
       await fetchAllData();
       return { success: true };
     } catch (error) {
@@ -186,6 +180,7 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // --- VEHICLE ---
   const addVehicle = async (vehicleData) => {
     try {
       await vehicleService.create(vehicleData, token);
@@ -196,6 +191,7 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  // --- USER / CUSTOMER ---
   const addUser = async (userData) => {
     try {
       await authService.createUser(userData, token);
@@ -206,6 +202,28 @@ export const DataProvider = ({ children }) => {
     }
   };
 
+  const deleteCustomer = async (id) => {
+    try {
+      await authService.deleteUser(id, token);
+      await fetchAllData(); 
+      return { success: true };
+    } catch (error) {
+      console.error('Delete customer error:', error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  const updateCustomer = async (id, userData) => {
+    try {
+      await authService.updateUser(id, userData, token);
+      await fetchAllData();
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
+  // --- MAINTENANCE & PROPOSAL ---
   const addMaintenance = async (maintenanceData) => {
     try {
       await maintenanceService.create(maintenanceData, token);
@@ -248,11 +266,10 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  // 👇 4. FUNCTION PROSES BOOKING (LOGIC BARU)
   const processBooking = async (id, data) => {
     try {
       await bookingService.process(id, data, token);
-      await fetchAllData(); // Refresh Data (Booking jadi Processed, Transaksi Nambah)
+      await fetchAllData();
       return { success: true };
     } catch (error) {
       return { success: false, message: error.message };
@@ -260,7 +277,6 @@ export const DataProvider = ({ children }) => {
   };
 
   const value = {
-    // Data
     services,
     rewards,
     customers,
@@ -268,9 +284,7 @@ export const DataProvider = ({ children }) => {
     vehicles,
     maintenance,
     proposals,
-    bookings, // 👈 5. EXPORT STATE
-
-    // Operations
+    bookings,
     fetchAllData,
     addService,
     updateService,
@@ -283,12 +297,14 @@ export const DataProvider = ({ children }) => {
     toggleTransactionStatus,
     addVehicle,
     addUser,
+    deleteCustomer,
+    updateCustomer, 
     addMaintenance,
     deleteTransaction,
     addProposal,   
     acceptProposal,
     rejectProposal,
-    processBooking, // 👈 6. EXPORT FUNCTION
+    processBooking,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

@@ -2,12 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { ProposalForm } from '../forms';
-import { proposalService } from '../../services'; // 👈 IMPORT SERVICE
+import { proposalService } from '../../services';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import { 
   Plus, FileText, CheckCircle, XCircle, 
-  Clock, Eye, AlertCircle, Search, Loader2 
+  Clock, AlertCircle, Search, Loader2 
 } from 'lucide-react';
 import { formatDate, formatRupiah } from '../../utils/formatters';
 
@@ -19,7 +19,7 @@ const ProposalsPage = () => {
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState(null);
-  const [isLoadingDetail, setIsLoadingDetail] = useState(false); // 👈 STATE LOADING
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -44,21 +44,17 @@ const ProposalsPage = () => {
     setCurrentPage(page);
   };
 
-  // 👇 FUNGSI BARU: TARIK DATA DETAIL
+  // Fungsi untuk fetch detail lengkap saat card diklik
   const handleViewDetail = async (proposal) => {
-    // 1. Tampilkan modal dengan data seadanya dulu
-    setSelectedProposal(proposal);
+    setSelectedProposal(proposal);           // Tampilkan dulu data yang ada
     setIsLoadingDetail(true);
 
     try {
-      // 2. Request data lengkap (items) ke server
       const response = await proposalService.getDetail(proposal.id, token);
-      const fullData = response.data || response; // Handle struktur response
-      
-      // 3. Update data di modal dengan yang lengkap
+      const fullData = response.data || response;
       setSelectedProposal(fullData);
     } catch (error) {
-      console.error("Gagal ambil detail:", error);
+      console.error("Gagal memuat detail proposal:", error);
     } finally {
       setIsLoadingDetail(false);
     }
@@ -66,11 +62,11 @@ const ProposalsPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Sent': return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
-      case 'Accepted': return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
+      case 'Sent':      return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
+      case 'Accepted':  return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
       case 'Converted': return 'text-blue-400 border-blue-500/30 bg-blue-500/10';
-      case 'Rejected': return 'text-red-400 border-red-500/30 bg-red-500/10';
-      default: return 'text-zinc-400 border-zinc-500/30 bg-zinc-500/10';
+      case 'Rejected':  return 'text-red-400 border-red-500/30 bg-red-500/10';
+      default:          return 'text-zinc-400 border-zinc-500/30 bg-zinc-500/10';
     }
   };
 
@@ -80,15 +76,15 @@ const ProposalsPage = () => {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-           <h2 className="text-3xl font-bold text-white flex items-center">
-             <FileText className="w-6 h-6 mr-2 text-blue-400" />
-             {userRole === 'admin' ? 'Project Custom' : 'Penawaran Saya'}
-           </h2>
-           <p className="text-zinc-400 text-sm mt-1">
-             {userRole === 'admin' 
-               ? 'Kelola penawaran modifikasi dan estimasi.' 
-               : 'Daftar estimasi biaya untuk project motor Anda.'}
-           </p>
+          <h2 className="text-3xl font-bold text-white flex items-center">
+            <FileText className="w-6 h-6 mr-2 text-blue-400" />
+            {userRole === 'admin' ? 'Project Custom' : 'Penawaran Saya'}
+          </h2>
+          <p className="text-zinc-400 text-sm mt-1">
+            {userRole === 'admin' 
+              ? 'Kelola penawaran modifikasi dan estimasi.' 
+              : 'Daftar estimasi biaya untuk project motor Anda.'}
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -114,7 +110,7 @@ const ProposalsPage = () => {
         </div>
       </div>
 
-      {/* LIST PROPOSALS */}
+      {/* LIST PROPOSALS - CARD CLICKABLE */}
       <div className="space-y-3">
         {paginatedData.length === 0 ? (
           <div className="p-10 text-center border border-dashed border-zinc-700 rounded-xl bg-zinc-800/30">
@@ -123,19 +119,22 @@ const ProposalsPage = () => {
           </div>
         ) : (
           paginatedData.map((item) => (
-            <div 
-              key={item.id} 
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-zinc-800/70 rounded-xl border border-zinc-700 hover:border-zinc-500 transition gap-4 group"
+            <div
+              key={item.id}
+              onClick={() => handleViewDetail(item)}
+              className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-zinc-800/70 rounded-xl border border-zinc-700 hover:border-blue-500 hover:bg-zinc-800/90 transition-all cursor-pointer gap-4"
             >
               <div className="flex items-center gap-4 min-w-0 flex-1">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 flex-shrink-0 border border-blue-400/20 group-hover:scale-105 transition-transform">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-white font-bold truncate text-base">{item.title}</h4>
+                  <h4 className="text-white font-bold truncate text-base group-hover:text-blue-300 transition-colors">
+                    {item.title}
+                  </h4>
                   <div className="flex items-center gap-2 text-sm text-zinc-400">
                     <span className="bg-zinc-700/50 px-2 py-0.5 rounded text-zinc-300 text-xs border border-zinc-600">
-                        {item.vehicle ? `${item.vehicle.model} (${item.vehicle.plate})` : 'Tanpa Kendaraan'}
+                      {item.vehicle ? `${item.vehicle.model} (${item.vehicle.plate})` : 'Tanpa Kendaraan'}
                     </span>
                     <span className="hidden sm:inline">•</span>
                     <span className="hidden sm:inline">{formatDate(item.createdAt)}</span>
@@ -150,16 +149,6 @@ const ProposalsPage = () => {
                 <div className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${getStatusColor(item.status)}`}>
                   {item.status === 'Converted' ? 'Jadi Transaksi' : item.status}
                 </div>
-                <div className="mt-1">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-zinc-400 hover:text-white hover:bg-zinc-700 h-8 text-xs"
-                    onClick={() => handleViewDetail(item)} // 👈 PAKE FUNGSI BARU
-                  >
-                    <Eye size={14} className="mr-1" /> Detail
-                  </Button>
-                </div>
               </div>
             </div>
           ))
@@ -171,7 +160,7 @@ const ProposalsPage = () => {
         <div className="flex justify-center items-center gap-2 pt-4">
           <button
             onClick={() => goToPage(currentPage - 1)}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40 transition-colors"
             disabled={currentPage === 1}
           >
             Prev
@@ -180,7 +169,7 @@ const ProposalsPage = () => {
             <button
               key={i}
               onClick={() => goToPage(i + 1)}
-              className={`px-3 py-1 rounded-lg border ${
+              className={`px-3 py-1 rounded-lg border transition-colors ${
                 currentPage === i + 1
                   ? 'bg-blue-600 text-white border-blue-500 font-bold'
                   : 'bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700'
@@ -191,7 +180,7 @@ const ProposalsPage = () => {
           ))}
           <button
             onClick={() => goToPage(currentPage + 1)}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40 transition-colors"
             disabled={currentPage === totalPages}
           >
             Next
@@ -199,7 +188,7 @@ const ProposalsPage = () => {
         </div>
       )}
 
-      {/* MODAL 1: CREATE FORM */}
+      {/* MODAL CREATE */}
       <Modal
         open={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
@@ -208,7 +197,7 @@ const ProposalsPage = () => {
         <ProposalForm onClose={() => setIsCreateOpen(false)} />
       </Modal>
 
-      {/* MODAL 2: DETAIL VIEW */}
+      {/* MODAL DETAIL */}
       <Modal
         open={!!selectedProposal}
         onClose={() => setSelectedProposal(null)}
@@ -216,7 +205,7 @@ const ProposalsPage = () => {
       >
         {selectedProposal && (
           <div className="space-y-5">
-            {/* Header Detail Card */}
+            {/* Header */}
             <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700 relative overflow-hidden">
               <h3 className="font-bold text-xl text-white mb-1">{selectedProposal.title}</h3>
               <div className="flex justify-between items-center text-sm text-zinc-400 border-b border-zinc-700 pb-3 mb-3">
@@ -225,20 +214,20 @@ const ProposalsPage = () => {
               </div>
               <div className="text-sm space-y-2">
                 <p className="flex justify-between">
-                    <span className="text-zinc-500">Kendaraan:</span> 
-                    <span className="text-zinc-200 font-medium">
-                        {selectedProposal.vehicle?.brand} {selectedProposal.vehicle?.model} ({selectedProposal.vehicle?.plate})
-                    </span>
+                  <span className="text-zinc-500">Kendaraan:</span> 
+                  <span className="text-zinc-200 font-medium">
+                    {selectedProposal.vehicle?.brand} {selectedProposal.vehicle?.model} ({selectedProposal.vehicle?.plate})
+                  </span>
                 </p>
                 {selectedProposal.admin_note && (
                   <div className="mt-2 bg-zinc-900/50 p-2 rounded text-zinc-400 italic text-xs border border-zinc-700/50">
-                     " {selectedProposal.admin_note} "
+                    "{selectedProposal.admin_note}"
                   </div>
                 )}
               </div>
             </div>
 
-            {/* List Items Table (SCROLLABLE & STICKY) */}
+            {/* Rincian Biaya */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-semibold text-zinc-300 flex items-center gap-2 text-sm">
@@ -246,13 +235,12 @@ const ProposalsPage = () => {
                 </h4>
                 {isLoadingDetail && (
                   <span className="text-xs text-blue-400 flex items-center animate-pulse">
-                    <Loader2 size={12} className="mr-1 animate-spin" /> Memuat Item...
+                    <Loader2 size={12} className="mr-1 animate-spin" /> Memuat item...
                   </span>
                 )}
               </div>
               
               <div className="border border-zinc-700 rounded-xl overflow-hidden bg-zinc-900">
-                {/* 👇 WRAPPER INI YANG BIKIN SCROLL */}
                 <div className="max-h-60 overflow-y-auto custom-scrollbar relative">
                   <table className="w-full text-sm">
                     <thead className="bg-zinc-950 text-zinc-500 sticky top-0 z-10 shadow-sm border-b border-zinc-800">
@@ -265,11 +253,10 @@ const ProposalsPage = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800 bg-zinc-900">
-                      {/* Cek Item: Kalau loading pake skeleton/loading text, kalau ada render, kalau kosong warning */}
                       {!selectedProposal.items && isLoadingDetail ? (
-                         <tr><td colSpan="5" className="text-center py-8 text-zinc-500">Mengambil data...</td></tr>
+                        <tr><td colSpan={5} className="text-center py-8 text-zinc-500">Mengambil data...</td></tr>
                       ) : !selectedProposal.items || selectedProposal.items.length === 0 ? (
-                         <tr><td colSpan="5" className="text-center py-8 text-zinc-500 italic">Tidak ada item (atau gagal memuat)</td></tr>
+                        <tr><td colSpan={5} className="text-center py-8 text-zinc-500 italic">Tidak ada item</td></tr>
                       ) : (
                         selectedProposal.items.map((item, idx) => (
                           <tr key={idx} className="hover:bg-zinc-800 transition-colors">
@@ -288,18 +275,18 @@ const ProposalsPage = () => {
                     </tbody>
                   </table>
                 </div>
-                
-                {/* FOOTER TOTAL */}
-                <div className="bg-zinc-800 border-t border-zinc-700 p-3 flex justify-between items-center z-20 relative">
-                   <span className="text-zinc-400 text-sm font-medium">Total Estimasi:</span>
-                   <span className="text-blue-400 text-xl font-bold font-mono">
-                      {formatRupiah(selectedProposal.grand_total)}
-                   </span>
+
+                {/* Total */}
+                <div className="bg-zinc-800 border-t border-zinc-700 p-3 flex justify-between items-center">
+                  <span className="text-zinc-400 text-sm font-medium">Total Estimasi:</span>
+                  <span className="text-blue-400 text-xl font-bold font-mono">
+                    {formatRupiah(selectedProposal.grand_total)}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* ACTION BUTTONS */}
+            {/* Actions (hanya untuk user & status Sent) */}
             {userRole === 'user' && selectedProposal.status === 'Sent' && (
               <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl">
                 <div className="flex gap-3 items-start mb-4">
@@ -336,12 +323,11 @@ const ProposalsPage = () => {
                 </div>
               </div>
             )}
-            
-            {/* CONVERTED INFO */}
+
             {selectedProposal.status === 'Converted' && (
               <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl text-center">
                 <p className="text-sm text-blue-300 font-medium">
-                  ✅ Penawaran ini sudah disetujui.
+                  ✅ Penawaran ini sudah disetujui dan menjadi transaksi.
                 </p>
               </div>
             )}
