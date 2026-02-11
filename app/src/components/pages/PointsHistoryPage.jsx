@@ -68,7 +68,7 @@ const PointsHistoryPage = () => {
                 <div className="p-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl shadow-lg shadow-orange-900/20">
                     <Wallet className="w-7 h-7 text-white" />
                 </div>
-                Riwayat Poin
+                Riwayat Poin dan Service
             </h2>
             <p className="text-zinc-400 mt-1 ml-1">Laporan mutasi poin masuk dan keluar</p>
         </div>

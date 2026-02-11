@@ -23,7 +23,6 @@ const ProposalsPage = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // SEARCH & FILTER
   const filteredProposals = useMemo(() => {
     return proposals.filter((p) =>
       `${p.title || ''} ${p.vehicle?.plate || ''} ${p.admin_note || ''}`
@@ -32,7 +31,6 @@ const ProposalsPage = () => {
     );
   }, [proposals, search]);
 
-  // PAGINATION
   const totalPages = Math.ceil(filteredProposals.length / ITEMS_PER_PAGE);
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -44,9 +42,8 @@ const ProposalsPage = () => {
     setCurrentPage(page);
   };
 
-  // Fungsi untuk fetch detail lengkap saat card diklik
   const handleViewDetail = async (proposal) => {
-    setSelectedProposal(proposal);           // Tampilkan dulu data yang ada
+    setSelectedProposal(proposal);
     setIsLoadingDetail(true);
 
     try {
@@ -110,7 +107,7 @@ const ProposalsPage = () => {
         </div>
       </div>
 
-      {/* LIST PROPOSALS - CARD CLICKABLE */}
+      {/* LIST PROPOSALS */}
       <div className="space-y-3">
         {paginatedData.length === 0 ? (
           <div className="p-10 text-center border border-dashed border-zinc-700 rounded-xl bg-zinc-800/30">
@@ -122,7 +119,7 @@ const ProposalsPage = () => {
             <div
               key={item.id}
               onClick={() => handleViewDetail(item)}
-              className="group flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-zinc-800/70 rounded-xl border border-zinc-700 hover:border-blue-500 hover:bg-zinc-800/90 transition-all cursor-pointer gap-4"
+              className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-zinc-800/80 rounded-xl border border-zinc-700 hover:border-blue-500 hover:bg-zinc-800/95 transition-all cursor-pointer gap-4 min-h-[120px]"
             >
               <div className="flex items-center gap-4 min-w-0 flex-1">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20 flex-shrink-0 border border-blue-400/20 group-hover:scale-105 transition-transform">
@@ -132,7 +129,7 @@ const ProposalsPage = () => {
                   <h4 className="text-white font-bold truncate text-base group-hover:text-blue-300 transition-colors">
                     {item.title}
                   </h4>
-                  <div className="flex items-center gap-2 text-sm text-zinc-400">
+                  <div className="flex items-center gap-2 text-sm text-zinc-400 mt-1">
                     <span className="bg-zinc-700/50 px-2 py-0.5 rounded text-zinc-300 text-xs border border-zinc-600">
                       {item.vehicle ? `${item.vehicle.model} (${item.vehicle.plate})` : 'Tanpa Kendaraan'}
                     </span>
@@ -142,11 +139,11 @@ const ProposalsPage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 sm:gap-1 min-w-[140px]">
+              <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 min-w-[140px]">
                 <p className="font-mono font-bold text-lg text-white tracking-tight">
                   {formatRupiah(item.grand_total)}
                 </p>
-                <div className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${getStatusColor(item.status)}`}>
+                <div className={`px-3 py-1 rounded text-xs uppercase font-bold border ${getStatusColor(item.status)}`}>
                   {item.status === 'Converted' ? 'Jadi Transaksi' : item.status}
                 </div>
               </div>
@@ -160,7 +157,7 @@ const ProposalsPage = () => {
         <div className="flex justify-center items-center gap-2 pt-4">
           <button
             onClick={() => goToPage(currentPage - 1)}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40 transition-colors"
+            className="px-4 py-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40 transition-colors"
             disabled={currentPage === 1}
           >
             Prev
@@ -169,7 +166,7 @@ const ProposalsPage = () => {
             <button
               key={i}
               onClick={() => goToPage(i + 1)}
-              className={`px-3 py-1 rounded-lg border transition-colors ${
+              className={`px-4 py-2 rounded-lg border transition-colors ${
                 currentPage === i + 1
                   ? 'bg-blue-600 text-white border-blue-500 font-bold'
                   : 'bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700'
@@ -180,7 +177,7 @@ const ProposalsPage = () => {
           ))}
           <button
             onClick={() => goToPage(currentPage + 1)}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40 transition-colors"
+            className="px-4 py-2 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40 transition-colors"
             disabled={currentPage === totalPages}
           >
             Next
@@ -197,7 +194,7 @@ const ProposalsPage = () => {
         <ProposalForm onClose={() => setIsCreateOpen(false)} />
       </Modal>
 
-      {/* MODAL DETAIL */}
+      {/* MODAL DETAIL - Ukuran lebih pas */}
       <Modal
         open={!!selectedProposal}
         onClose={() => setSelectedProposal(null)}
@@ -206,7 +203,7 @@ const ProposalsPage = () => {
         {selectedProposal && (
           <div className="space-y-5">
             {/* Header */}
-            <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700 relative overflow-hidden">
+            <div className="bg-zinc-800 p-5 rounded-xl border border-zinc-700">
               <h3 className="font-bold text-xl text-white mb-1">{selectedProposal.title}</h3>
               <div className="flex justify-between items-center text-sm text-zinc-400 border-b border-zinc-700 pb-3 mb-3">
                 <span>Ref: #{selectedProposal.id}</span>
@@ -216,11 +213,11 @@ const ProposalsPage = () => {
                 <p className="flex justify-between">
                   <span className="text-zinc-500">Kendaraan:</span> 
                   <span className="text-zinc-200 font-medium">
-                    {selectedProposal.vehicle?.brand} {selectedProposal.vehicle?.model} ({selectedProposal.vehicle?.plate})
+                    {selectedProposal.vehicle?.brand} {selectedProposal.vehicle?.model} ({selectedProposal.vehicle?.plate || '-'})
                   </span>
                 </p>
                 {selectedProposal.admin_note && (
-                  <div className="mt-2 bg-zinc-900/50 p-2 rounded text-zinc-400 italic text-xs border border-zinc-700/50">
+                  <div className="mt-2 bg-zinc-900/50 p-3 rounded text-zinc-400 italic text-xs border border-zinc-700/50">
                     "{selectedProposal.admin_note}"
                   </div>
                 )}
@@ -235,21 +232,21 @@ const ProposalsPage = () => {
                 </h4>
                 {isLoadingDetail && (
                   <span className="text-xs text-blue-400 flex items-center animate-pulse">
-                    <Loader2 size={12} className="mr-1 animate-spin" /> Memuat item...
+                    <Loader2 size={12} className="mr-1 animate-spin" /> Memuat...
                   </span>
                 )}
               </div>
               
               <div className="border border-zinc-700 rounded-xl overflow-hidden bg-zinc-900">
-                <div className="max-h-60 overflow-y-auto custom-scrollbar relative">
+                <div className="max-h-64 overflow-y-auto custom-scrollbar relative">
                   <table className="w-full text-sm">
                     <thead className="bg-zinc-950 text-zinc-500 sticky top-0 z-10 shadow-sm border-b border-zinc-800">
                       <tr>
-                        <th className="px-3 py-3 text-left font-medium text-xs uppercase tracking-wider">Deskripsi</th>
+                        <th className="px-4 py-3 text-left font-medium text-xs uppercase tracking-wider">Deskripsi</th>
                         <th className="px-3 py-3 text-center font-medium text-xs uppercase tracking-wider">Tipe</th>
-                        <th className="px-3 py-3 text-right font-medium text-xs uppercase tracking-wider">Harga</th>
+                        <th className="px-4 py-3 text-right font-medium text-xs uppercase tracking-wider">Harga</th>
                         <th className="px-3 py-3 text-center font-medium text-xs uppercase tracking-wider">Qty</th>
-                        <th className="px-3 py-3 text-right font-medium text-xs uppercase tracking-wider">Subtotal</th>
+                        <th className="px-4 py-3 text-right font-medium text-xs uppercase tracking-wider">Subtotal</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800 bg-zinc-900">
@@ -260,15 +257,15 @@ const ProposalsPage = () => {
                       ) : (
                         selectedProposal.items.map((item, idx) => (
                           <tr key={idx} className="hover:bg-zinc-800 transition-colors">
-                            <td className="px-3 py-2 text-zinc-300">{item.description}</td>
-                            <td className="px-3 py-2 text-center">
+                            <td className="px-4 py-3 text-zinc-300">{item.description}</td>
+                            <td className="px-3 py-3 text-center">
                               <span className={`text-[10px] px-2 py-0.5 rounded border ${item.type === 'Part' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>
                                 {item.type}
                               </span>
                             </td>
-                            <td className="px-3 py-2 text-right text-zinc-500 text-xs">{formatRupiah(item.price)}</td>
-                            <td className="px-3 py-2 text-center text-zinc-500 text-xs">{item.qty}</td>
-                            <td className="px-3 py-2 text-right font-mono font-medium text-zinc-200">{formatRupiah(item.subtotal)}</td>
+                            <td className="px-4 py-3 text-right text-zinc-500 text-xs font-mono">{formatRupiah(item.price)}</td>
+                            <td className="px-3 py-3 text-center text-zinc-500 text-xs">{item.qty}</td>
+                            <td className="px-4 py-3 text-right font-mono font-medium text-zinc-200">{formatRupiah(item.subtotal)}</td>
                           </tr>
                         ))
                       )}
@@ -276,8 +273,7 @@ const ProposalsPage = () => {
                   </table>
                 </div>
 
-                {/* Total */}
-                <div className="bg-zinc-800 border-t border-zinc-700 p-3 flex justify-between items-center">
+                <div className="bg-zinc-800 border-t border-zinc-700 p-4 flex justify-between items-center">
                   <span className="text-zinc-400 text-sm font-medium">Total Estimasi:</span>
                   <span className="text-blue-400 text-xl font-bold font-mono">
                     {formatRupiah(selectedProposal.grand_total)}
@@ -286,10 +282,10 @@ const ProposalsPage = () => {
               </div>
             </div>
 
-            {/* Actions (hanya untuk user & status Sent) */}
+            {/* Actions */}
             {userRole === 'user' && selectedProposal.status === 'Sent' && (
               <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl">
-                <div className="flex gap-3 items-start mb-4">
+                <div className="flex gap-3 items-start mb-3">
                   <AlertCircle className="text-yellow-500 shrink-0 mt-0.5" size={20} />
                   <p className="text-xs text-yellow-200/80 leading-relaxed">
                     Dengan menyetujui penawaran ini, transaksi akan otomatis dibuat dan masuk ke antrian bengkel.
@@ -304,7 +300,7 @@ const ProposalsPage = () => {
                       setSelectedProposal(null);
                     }}
                     icon={XCircle}
-                    className="h-9 text-xs"
+                    className="h-8 text-xs"
                   >
                     Tolak
                   </Button>
@@ -316,7 +312,7 @@ const ProposalsPage = () => {
                       setSelectedProposal(null);
                     }}
                     icon={CheckCircle}
-                    className="h-9 text-xs"
+                    className="h-8 text-xs"
                   >
                     Setujui
                   </Button>

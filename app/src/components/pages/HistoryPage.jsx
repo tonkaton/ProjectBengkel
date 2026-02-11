@@ -21,7 +21,7 @@ const HistoryPage = () => {
                 <div className="p-3 bg-blue-600/20 rounded-xl shadow-lg shadow-blue-900/10 border border-blue-500/20">
                     <Clock className="w-7 h-7 text-blue-400" />
                 </div>
-                Riwayat Servis
+                Riwayat Poin dan Service
             </h2>
             <p className="text-zinc-400 mt-1 ml-1">Catatan perawatan motor Anda</p>
         </div>
