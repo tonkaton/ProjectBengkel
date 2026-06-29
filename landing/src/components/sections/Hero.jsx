@@ -26,8 +26,8 @@ export default function Hero() {
           transition={{ duration: 1 }}
           className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight mb-6"
         >
-          <span className="text-yellow-400">Sintink Garage</span>{' '}
-          <span className="text-red-500">Performance</span>
+          <span className="text-yellow-400">Botak Engine</span>{' '}
+          <span className="text-red-500">Speed</span>
           <br />
           <span className="text-white">{COMPANY.tagline}</span>
         </motion.h1>

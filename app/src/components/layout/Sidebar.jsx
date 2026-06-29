@@ -41,7 +41,7 @@ const Sidebar = ({
         {/* Logo Logic */}
         <div className={`${!sidebarOpen ? 'block md:hidden' : 'block'} min-w-0 transition-opacity duration-200`}>
            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent truncate">
-            Sintink Garage
+            Botak Engine Speed
           </h1>
           <p className="text-xs md:text-sm text-zinc-400 mt-0.5 truncate">
             {userRole === 'admin' ? 'Admin Panel' : 'Customer Portal'}
