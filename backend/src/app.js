@@ -2,22 +2,22 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+const allowedOrigins = [
+  "http://127.0.0.1",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "http://localhost:5173",
+  "http://localhost:5174",
+
+  "https://botakengine.codiroom.tech",
+  "https://botakdashboard.codiroom.tech",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://127.0.0.1",
-      "http://127.0.0.1:5173",
-      "http://127.0.0.1:5174",
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:5000",
-      "https://app-botakengine.miftadigital.cloud",
-      "http://app-botakengine.miftadigital.cloud",
-      "https://botakengine.miftadigital.cloud",
-      "http://botakengine.miftadigital.cloud",
-    ],
+    origin: allowedOrigins,
     credentials: true,
-  }),
+  })
 );
 app.use(express.json()); // Parse JSON body
 
