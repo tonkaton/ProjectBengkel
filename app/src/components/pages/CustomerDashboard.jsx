@@ -3,18 +3,15 @@ import { Star, Bike } from 'lucide-react';
 import { useAuth, useData } from '../../contexts';
 import { formatRupiah, formatDateTime } from '../../utils/formatters';
 import { maintenanceService } from '../../services';
-import ServiceAssistant from '../ui/ServiceAssistant'; 
+import ServiceAssistant from '../ui/ServiceAssistant';
 
 const CustomerDashboard = ({ onNavigate }) => {
-  // [UPDATE] Ambil token langsung dari useAuth, jangan manual dari storage
   const { currentUser, token } = useAuth();
-  const { transactions, vehicles } = useData(); 
-  
-  const [latestMaintenance, setLatestMaintenance] = useState(null);
-  const [loadingMaintenance, setLoadingMaintenance] = useState(true);
+  const { transactions, vehicles } = useData();
 
-  // [OPTIMASI] Gunakan useMemo agar tidak filter ulang setiap render
-  // 1. Filter Transaksi User Ini
+  const [latestMaintenance, setLatestMaintenance] = useState(null);
+  const [, setLoadingMaintenance] = useState(true);
+
   const myTransactions = useMemo(() => {
     if (!currentUser || !transactions) return [];
     return transactions
@@ -22,24 +19,16 @@ const CustomerDashboard = ({ onNavigate }) => {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [currentUser, transactions]);
 
-  // 2. Filter Motor User Ini
   const myVehicles = useMemo(() => {
     if (!currentUser || !vehicles) return [];
-    return vehicles.filter((v) => {
-       // Handle potensi beda casing property dari backend
-       return v.UserId === currentUser.id || v.userId === currentUser.id; 
-    });
+    return vehicles.filter((v) => v.UserId === currentUser.id || v.userId === currentUser.id);
   }, [currentUser, vehicles]);
 
-  // 3. Fetch Data 'Next Service'
   useEffect(() => {
     const fetchMaintenance = async () => {
       try {
-        // [UPDATE] Cek token dari context
         if (!token) return;
-
         setLoadingMaintenance(true);
-        // Pass token yang didapat dari context
         const res = await maintenanceService.getLatestUpcoming(token);
         setLatestMaintenance(res.data || null);
       } catch (error) {
@@ -48,72 +37,64 @@ const CustomerDashboard = ({ onNavigate }) => {
         setLoadingMaintenance(false);
       }
     };
-
-    if (token) {
-        fetchMaintenance();
-    }
-  }, [token]); // Dependency array ke token
+    if (token) fetchMaintenance();
+  }, [token]);
 
   return (
-    <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto relative pb-32 md:pb-24">
-      
-      {/* --- WELCOME BANNER --- */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-yellow-500 p-6 md:p-8 rounded-2xl md:rounded-3xl text-white shadow-2xl border border-red-400/30">
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="relative mx-auto max-w-7xl space-y-6 pb-32 md:space-y-8 md:pb-24">
+      {/* WELCOME BANNER */}
+      <div className="relative overflow-hidden rounded-4xl bg-accent p-6 text-white shadow-[0_16px_36px_rgba(224,70,59,0.30)] md:p-8">
+        <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <div>
-            <p className="text-red-100 font-medium mb-1 tracking-wide text-sm md:text-base">Selamat Datang Kembali,</p>
-            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight">
-              {currentUser?.name || 'User'}! 👋
-            </h2>
+            <p className="mb-1 text-sm font-medium tracking-wide text-white/80">Selamat datang kembali,</p>
+            <h2 className="font-display text-4xl tracking-wide md:text-5xl">{currentUser?.name || 'User'}</h2>
           </div>
-          
-          <div className="w-full md:w-auto bg-black/20 backdrop-blur-md rounded-2xl p-4 pl-5 pr-8 border border-white/10 flex items-center gap-4 cursor-default transition-transform active:scale-95 md:hover:scale-105">
-            <div className="bg-yellow-400/20 p-3 rounded-full shadow-inner flex-shrink-0">
-              <Star className="w-6 h-6 md:w-8 md:h-8 text-yellow-300 fill-yellow-400" />
+
+          <div className="flex w-full items-center gap-4 rounded-3xl border border-white/15 bg-white/10 p-4 pr-8 backdrop-blur-md md:w-auto">
+            <div className="flex-shrink-0 rounded-2xl bg-white/15 p-3">
+              <Star className="h-7 w-7 fill-yellow-300 text-yellow-300" />
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-red-100 tracking-wider">
-                Member Points
-              </p>
-              <h3 className="text-2xl md:text-3xl font-black text-white leading-none mt-0.5">
-                {currentUser?.points || 0}
-              </h3>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">Member Points</p>
+              <h3 className="mt-0.5 font-mono text-3xl font-bold leading-none">{currentUser?.points || 0}</h3>
             </div>
           </div>
         </div>
       </div>
 
-      {/* --- MAIN GRID --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
-        
-        {/* KOLOM KIRI: MOTOR SAYA */}
-        <div className="bg-zinc-900 rounded-2xl p-5 md:p-6 border border-zinc-800 shadow-xl flex flex-col min-h-[300px] md:min-h-[400px]">
-          <div className="flex items-center justify-between mb-4 md:mb-6">
-            <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
-              <Bike className="w-5 h-5 text-red-500" /> 
+      {/* MAIN GRID */}
+      <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-2">
+        {/* MOTOR SAYA */}
+        <div className="flex min-h-[300px] flex-col rounded-4xl border border-white/70 bg-card p-5 shadow-soft md:min-h-[400px] md:p-6">
+          <div className="mb-4 flex items-center justify-between md:mb-6">
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-ink md:text-xl">
+              <Bike className="h-5 w-5 text-accent" />
               <span>Motor Saya</span>
             </h3>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">
+            <span className="rounded-full bg-base px-3 py-1 text-xs font-medium text-muted shadow-soft-in-sm">
               {myVehicles.length} Unit
             </span>
           </div>
-          
-          <div className="space-y-3 flex-1">
+
+          <div className="flex-1 space-y-3">
             {myVehicles.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-zinc-800 rounded-xl bg-zinc-950/30 text-zinc-500 p-8">
-                <Bike className="w-10 h-10 mb-3 opacity-50" />
+              <div className="flex h-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-black/10 p-8 text-muted">
+                <Bike className="mb-3 h-10 w-10 opacity-50" />
                 <p className="text-sm">Belum ada motor terdaftar</p>
               </div>
             ) : (
               myVehicles.map((v) => (
-                <div key={v.id} className="group p-4 bg-zinc-950/50 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all duration-200 flex items-center justify-between active:bg-zinc-800">
+                <div
+                  key={v.id}
+                  className="flex items-center justify-between rounded-2xl bg-base p-4 shadow-soft-in-sm"
+                >
                   <div>
-                    <h4 className="text-zinc-100 font-bold text-base md:text-lg tracking-tight group-hover:text-white transition-colors">
+                    <h4 className="text-base font-semibold tracking-tight text-ink md:text-lg">
                       {v.brand} {v.model}
                     </h4>
-                    <p className="text-zinc-500 text-xs font-mono mt-1 flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 bg-zinc-800 rounded text-zinc-400">{v.year}</span>
-                      <span className="text-zinc-600">•</span>
+                    <p className="mt-1 flex items-center gap-2 font-mono text-xs text-muted">
+                      <span className="rounded bg-white px-1.5 py-0.5 text-slate-500 shadow-soft-sm">{v.year}</span>
+                      <span>•</span>
                       <span>{v.plate}</span>
                     </p>
                   </div>
@@ -123,37 +104,35 @@ const CustomerDashboard = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* KOLOM KANAN: RIWAYAT TRANSAKSI */}
-        <div className="bg-zinc-900 rounded-2xl border border-zinc-800 shadow-xl overflow-hidden flex flex-col min-h-[300px] md:min-h-[400px]">
-          <div className="p-5 md:p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
-            <h3 className="text-lg md:text-xl font-bold text-white">Riwayat Transaksi</h3>
-            <span className="text-xs font-medium text-zinc-500">
-              Terbaru
-            </span>
+        {/* RIWAYAT TRANSAKSI */}
+        <div className="flex min-h-[300px] flex-col overflow-hidden rounded-4xl border border-white/70 bg-card shadow-soft md:min-h-[400px]">
+          <div className="flex items-center justify-between border-b border-black/5 p-5 md:p-6">
+            <h3 className="text-lg font-semibold text-ink md:text-xl">Riwayat Transaksi</h3>
+            <span className="text-xs font-medium text-muted">Terbaru</span>
           </div>
-          
-          <div className="divide-y divide-zinc-800/50 flex-1 overflow-y-auto max-h-[400px] md:max-h-[500px] scrollbar-thin scrollbar-thumb-zinc-700">
+
+          <div className="scrollbar-hide max-h-[400px] flex-1 divide-y divide-black/5 overflow-y-auto md:max-h-[500px]">
             {myTransactions.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-zinc-500 p-10">
+              <div className="flex h-full flex-col items-center justify-center p-10 text-muted">
                 <p className="text-sm">Belum ada riwayat transaksi</p>
               </div>
             ) : (
               myTransactions.slice(0, 5).map((t) => (
-                <div key={t.id} className="p-4 md:p-5 flex items-center justify-between hover:bg-zinc-800/30 transition-colors group">
+                <div key={t.id} className="flex items-center justify-between p-4 md:p-5">
                   <div className="flex items-start gap-3 md:gap-4">
-                    <div className="mt-1 p-2 rounded-lg bg-zinc-800 text-zinc-400 group-hover:text-green-400 group-hover:bg-green-400/10 transition-all hidden md:block">
-                      <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
+                    <div className="mt-1 hidden rounded-xl bg-base p-2 text-emerald-500 shadow-soft-in-sm md:block">
+                      <div className="h-1.5 w-1.5 rounded-full bg-current" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold text-sm group-hover:text-green-300 transition-colors line-clamp-1 max-w-[150px] md:max-w-none">
+                      <h4 className="line-clamp-1 max-w-[150px] text-sm font-semibold text-ink md:max-w-none">
                         {t.Service?.name || t.note || 'Servis Umum'}
                       </h4>
-                      <p className="text-zinc-500 text-[10px] mt-1 font-mono">{formatDateTime(t.createdAt)}</p>
+                      <p className="mt-1 font-mono text-[10px] text-muted">{formatDateTime(t.createdAt)}</p>
                     </div>
                   </div>
-                  <div className="text-right pl-2">
-                    <p className="text-white font-bold font-mono tracking-tight text-sm">{formatRupiah(t.amount)}</p>
-                    <span className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 mt-1 border border-green-500/20">
+                  <div className="pl-2 text-right">
+                    <p className="font-mono text-sm font-bold tracking-tight text-ink">{formatRupiah(t.amount)}</p>
+                    <span className="mt-1 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
                       +{t.points_earned}
                     </span>
                   </div>
@@ -164,12 +143,10 @@ const CustomerDashboard = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* --- SERVICE ASSISTANT --- */}
-      <ServiceAssistant 
-        maintenanceData={latestMaintenance} 
+      <ServiceAssistant
+        maintenanceData={latestMaintenance}
         onViewDetail={() => onNavigate && onNavigate('schedule')}
       />
-
     </div>
   );
 };

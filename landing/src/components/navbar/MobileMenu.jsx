@@ -1,45 +1,41 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { ANIMATION, APP_URL } from '../../constants';
+import { APP_URL } from '../../constants';
 
 /**
- * Mobile menu component with navigation and login
+ * Mobile menu — kartu Soft UI di bawah handlebar
  */
-export function MobileMenu({
-  isOpen,
-  links,
-  onLinkClick,
-}) {
+export function MobileMenu({ isOpen, links, onLinkClick }) {
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.nav
-          initial={ANIMATION.dropdownIn.initial}
-          animate={ANIMATION.dropdownIn.animate}
-          exit={ANIMATION.dropdownIn.exit}
-          className="md:hidden bg-black border-t border-gray-700 text-center py-5"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+          className="mt-2 rounded-4xl border border-white/70 bg-panel p-3 shadow-soft md:hidden"
         >
-          {links.map((link, index) => (
+          {links.map((link) => (
             <a
-              key={index}
+              key={link.href}
               href={link.href}
-              className="block py-3 text-gray-300 hover:text-yellow-400"
+              className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-base hover:text-ink hover:shadow-soft-in-sm"
               onClick={onLinkClick}
             >
               {link.label}
             </a>
           ))}
 
-          {/* Mobile Login Button */}
-          <div className="mt-4">
-            <a
-              href={APP_URL}
-              className="inline-block px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-yellow-400 hover:text-black transition"
-              onClick={onLinkClick}
-            >
-              Login
-            </a>
-          </div>
+          <a
+            href={APP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 block rounded-full bg-accent py-3 text-center text-sm font-semibold text-white shadow-[0_8px_18px_rgba(224,70,59,0.35)] transition active:scale-[0.98]"
+            onClick={onLinkClick}
+          >
+            Login
+          </a>
         </motion.nav>
       )}
     </AnimatePresence>

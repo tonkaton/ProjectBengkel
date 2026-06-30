@@ -2,11 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --shadow-out: -6px -6px 14px rgba(255, 255, 255, 0.8), 6px 6px 16px rgba(163, 177, 198, 0.45);
+  --shadow-in: inset -4px -4px 10px rgba(255, 255, 255, 0.7), inset 4px 4px 10px rgba(163, 177, 198, 0.45);
+}
+
 body {
-  @apply bg-black text-white;
-  font-family: 'Inter', sans-serif;
+  @apply bg-base text-ink;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  background-image:
+    radial-gradient(1100px 540px at 78% -8%, #f0f3f8 0%, rgba(240, 243, 248, 0) 60%),
+    radial-gradient(900px 500px at 0% 100%, #eef1f6 0%, rgba(238, 241, 246, 0) 55%),
+    linear-gradient(180deg, #e9edf2 0%, #e2e6ed 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* small uppercase label */
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.2em] text-muted;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

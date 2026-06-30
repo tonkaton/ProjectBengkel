@@ -6,15 +6,13 @@ import PropTypes from 'prop-types';
  */
 export function MobileMenuButton({ isOpen, onClick }) {
   return (
-    <div className="md:hidden">
-      <button 
-        onClick={onClick} 
-        className="text-yellow-400"
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
-      >
-        {isOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
-    </div>
+    <button
+      onClick={onClick}
+      className="flex h-11 w-11 items-center justify-center rounded-full bg-base text-ink shadow-soft-in transition active:shadow-soft-in-sm"
+      aria-label={isOpen ? 'Tutup menu' : 'Buka menu'}
+    >
+      {isOpen ? <X size={22} /> : <Menu size={22} />}
+    </button>
   );
 }
 

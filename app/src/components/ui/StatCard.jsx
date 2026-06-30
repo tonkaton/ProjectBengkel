@@ -1,22 +1,30 @@
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
 
+const chipMap = {
+  'bg-red-600': 'bg-red-100 text-red-600',
+  'bg-yellow-600': 'bg-amber-100 text-amber-600',
+  'bg-zinc-700': 'bg-slate-200 text-slate-600',
+};
+
 const StatCard = ({ icon: Icon, label, value, color, trend }) => {
+  const chip = chipMap[color] || 'bg-base text-accent';
+
   return (
-    <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 p-6 rounded-xl border border-zinc-700 hover:border-yellow-500 transition-all duration-300 transform hover:scale-105">
+    <div className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-shadow duration-300 hover:shadow-soft-lg">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-gray-400 text-sm mb-2">{label}</p>
-          <h3 className="text-3xl font-bold text-white mb-1">{value}</h3>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</p>
+          <h3 className="mt-2 font-mono text-3xl font-semibold tracking-tight text-ink">{value}</h3>
           {trend && (
-            <div className="flex items-center text-green-400 text-sm">
-              <TrendingUp className="w-4 h-4 mr-1" />
+            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">
+              <TrendingUp className="h-3.5 w-3.5" />
               <span>{trend}</span>
             </div>
           )}
         </div>
-        <div className={`p-4 rounded-lg ${color}`}>
-          <Icon className="w-6 h-6 text-white" />
+        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${chip} shadow-soft-sm`}>
+          <Icon className="h-6 w-6" />
         </div>
       </div>
     </div>

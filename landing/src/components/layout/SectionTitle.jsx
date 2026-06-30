@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { ANIMATION } from '../../constants';
 
 /**
- * Animated section title component
+ * Animated section title component — Soft UI
  */
-export function SectionTitle({ 
-  title, 
+export function SectionTitle({
+  eyebrow,
+  title,
   highlight,
   subtitle,
   className = '',
@@ -20,22 +20,23 @@ export function SectionTitle({
 
   return (
     <div className={`mb-12 ${alignments[align]} ${className}`}>
+      {eyebrow && <span className="eyebrow">{eyebrow}</span>}
       <motion.h2
-        initial={ANIMATION.fadeInDown.initial}
-        whileInView={ANIMATION.fadeInUp.whileInView}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="text-4xl md:text-5xl font-extrabold mb-4"
+        className="mt-3 font-display text-5xl tracking-wide text-ink md:text-6xl"
       >
-        {title} {highlight && <span className="text-yellow-400">{highlight}</span>}
+        {title} {highlight && <span className="text-accent">{highlight}</span>}
       </motion.h2>
       {subtitle && (
         <motion.p
-          initial={ANIMATION.fadeInUp.initial}
-          whileInView={ANIMATION.fadeInUp.whileInView}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.12 }}
           viewport={{ once: true }}
-          className="text-gray-300 text-lg"
+          className="mx-auto mt-4 max-w-2xl text-lg text-slate-500"
         >
           {subtitle}
         </motion.p>
@@ -45,6 +46,7 @@ export function SectionTitle({
 }
 
 SectionTitle.propTypes = {
+  eyebrow: PropTypes.string,
   title: PropTypes.string.isRequired,
   highlight: PropTypes.string,
   subtitle: PropTypes.string,

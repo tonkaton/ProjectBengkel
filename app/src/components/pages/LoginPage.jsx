@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Wrench, Zap } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { Input, Button } from '../ui';
 
@@ -22,38 +23,43 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4">
-      <div className="w-full max-w-md bg-zinc-900 p-8 rounded-xl border border-zinc-700 space-y-6 shadow-2xl">
-        <h2 className="text-3xl font-black text-center bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent uppercase italic">
-          Login Bengkel
-        </h2>
-        
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-md rounded-4xl border border-white/70 bg-card p-8 shadow-soft-lg">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-base text-accent shadow-soft-in">
+            <Wrench size={24} strokeWidth={2.3} />
+          </span>
+          <h2 className="mt-4 font-display text-4xl tracking-wide text-ink">
+            BOTAK<span className="text-accent">.</span> ENGINE SPEED
+          </h2>
+          <p className="eyebrow mt-1">Masuk ke dashboard</p>
+        </div>
+
         {error && (
-          <div className="p-3 bg-red-900/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
+          <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">
             {error}
           </div>
         )}
 
-        <Input
-          placeholder="Email"
-          value={loginForm.email}
-          onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-          onKeyPress={handleKeyPress}
-        />
-        
-        <Input
-          type="password"
-          placeholder="Password"
-          value={loginForm.password}
-          onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-          onKeyPress={handleKeyPress}
-        />
-        
-        <Button
-          onClick={handleLogin}
-          className="w-full uppercase shadow-lg"
-          size="lg"
-        >
+        <div className="space-y-4">
+          <Input
+            label="Email"
+            placeholder="nama@email.com"
+            value={loginForm.email}
+            onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+            onKeyPress={handleKeyPress}
+          />
+          <Input
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            value={loginForm.password}
+            onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+            onKeyPress={handleKeyPress}
+          />
+        </div>
+
+        <Button onClick={handleLogin} icon={Zap} className="mt-7 w-full" size="lg">
           Masuk
         </Button>
       </div>

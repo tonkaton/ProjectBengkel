@@ -2,7 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --shadow-out: -6px -6px 14px rgba(255, 255, 255, 0.8), 6px 6px 16px rgba(163, 177, 198, 0.45);
+  --shadow-in: inset -4px -4px 10px rgba(255, 255, 255, 0.7), inset 4px 4px 10px rgba(163, 177, 198, 0.45);
+}
+
 body {
-  @apply bg-black text-white;
-  font-family: 'Inter', sans-serif;
+  @apply bg-base text-ink;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  background-image:
+    radial-gradient(1100px 540px at 82% -8%, #f0f3f8 0%, rgba(240, 243, 248, 0) 60%),
+    linear-gradient(180deg, #e9edf2 0%, #e2e6ed 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.18em] text-muted;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { cn } from '../../utils';
-import { ANIMATION } from '../../constants';
 
 /**
- * Reusable Card component with animation support
+ * Reusable Card component — Soft UI
  */
 export function Card({
   children,
@@ -16,13 +15,13 @@ export function Card({
   ...props
 }) {
   const variants = {
-    default: 'bg-gray-800/60 border-gray-700 hover:border-yellow-400',
-    glass: 'bg-white/10 backdrop-blur-md border-white/20 hover:shadow-yellow-500/30',
-    solid: 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700',
+    default: 'bg-card border-white/70 shadow-soft',
+    glass: 'bg-white/70 backdrop-blur-md border-white/70 shadow-soft',
+    solid: 'bg-card border-white/70 shadow-soft',
   };
 
   const baseClasses = cn(
-    'p-6 rounded-2xl shadow-lg border transition-all duration-300',
+    'rounded-4xl border p-6 transition-all duration-300',
     variants[variant],
     className
   );
@@ -31,10 +30,10 @@ export function Card({
     return (
       <motion.div
         className={baseClasses}
-        initial={ANIMATION.fadeInUp.initial}
-        whileInView={ANIMATION.fadeInUp.whileInView}
-        whileHover={hoverScale ? { scale: 1.05 } : undefined}
-        transition={{ duration: 0.6, delay }}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        whileHover={hoverScale ? { y: -4 } : undefined}
+        transition={{ duration: 0.5, delay }}
         viewport={{ once: true }}
         {...props}
       >

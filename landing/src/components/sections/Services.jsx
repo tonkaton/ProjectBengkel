@@ -1,50 +1,49 @@
 import { useState, useEffect } from 'react';
 import { Container } from '../layout';
-import { Card } from '../ui';
-import { Wrench, Droplets, Disc, Settings, Sparkles, Zap, Gauge } from 'lucide-react'; 
+import { Wrench, Droplets, Disc, Settings, Sparkles, Zap, Gauge } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-function ServiceCard({ service }) {
-  const getIcon = (name) => {
-    const lower = name.toLowerCase();
-    if (lower.includes('oli')) return <Droplets className="w-10 h-10 text-yellow-500" />;
-    if (lower.includes('ban')) return <Disc className="w-10 h-10 text-yellow-500" />;
-    if (lower.includes('rem')) return <Disc className="w-10 h-10 text-red-500" />;
-    if (lower.includes('servis') || lower.includes('tune')) return <Wrench className="w-10 h-10 text-blue-500" />;
-    if (lower.includes('cuci')) return <Sparkles className="w-10 h-10 text-cyan-400" />;
-    if (lower.includes('cvt')) return <Settings className="w-10 h-10 text-orange-500" />;
-    if (lower.includes('aki') || lower.includes('listrik')) return <Zap className="w-10 h-10 text-yellow-400" />;
-    return <Gauge className="w-10 h-10 text-gray-400" />;
-  };
 
-  const formatRupiah = (num) => {
-    return new Intl.NumberFormat('id-ID', { 
-      style: 'currency', 
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0 
-    }).format(num);
-  };
+function getIconMeta(name) {
+  const lower = (name || '').toLowerCase();
+  if (lower.includes('oli')) return { Icon: Droplets, cls: 'bg-amber-100 text-amber-600' };
+  if (lower.includes('ban')) return { Icon: Disc, cls: 'bg-blue-100 text-blue-600' };
+  if (lower.includes('rem')) return { Icon: Disc, cls: 'bg-red-100 text-red-600' };
+  if (lower.includes('servis') || lower.includes('tune')) return { Icon: Wrench, cls: 'bg-indigo-100 text-indigo-600' };
+  if (lower.includes('cuci')) return { Icon: Sparkles, cls: 'bg-cyan-100 text-cyan-600' };
+  if (lower.includes('cvt')) return { Icon: Settings, cls: 'bg-orange-100 text-orange-600' };
+  if (lower.includes('aki') || lower.includes('listrik')) return { Icon: Zap, cls: 'bg-yellow-100 text-yellow-600' };
+  return { Icon: Gauge, cls: 'bg-slate-200 text-slate-600' };
+}
+
+const formatRupiah = (num) =>
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(num);
+
+function ServiceCard({ service }) {
+  const { Icon, cls } = getIconMeta(service.name);
 
   return (
-    <Card className="p-8 group hover:border-yellow-500/50 transition-all duration-300 bg-zinc-900 border-zinc-800 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 blur-3xl rounded-full -translate-y-12 translate-x-12 group-hover:bg-yellow-500/20 transition-all duration-500"></div>
-
-      <div className="mb-6 p-3 bg-zinc-950/50 rounded-xl w-fit border border-zinc-800 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-black/50">
-        {getIcon(service.name)}
+    <div className="group rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-soft-lg">
+      <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${cls} shadow-soft-sm transition-transform duration-300 group-hover:-translate-y-0.5`}>
+        <Icon className="h-7 w-7" />
       </div>
 
-      <h3 className="text-xl font-bold text-white mb-2 leading-tight">{service.name}</h3>
-      
-      <p className="text-yellow-400 font-mono font-bold text-lg mb-4">
+      <h3 className="text-lg font-semibold leading-tight text-ink">{service.name}</h3>
+
+      <p className="mt-2 font-mono text-lg font-semibold text-accent">
         {formatRupiah(service.price)}
       </p>
 
-      <div className="pt-4 border-t border-zinc-800 flex items-center gap-2 text-zinc-500 text-xs font-medium">
-        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+      <div className="mt-5 flex items-center gap-2 border-t border-black/5 pt-4 text-xs font-medium text-muted">
+        <span className="h-2 w-2 rounded-full bg-ok" />
         Estimasi: {service.duration || '60 menit'}
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -57,21 +56,11 @@ export default function Services() {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/services`);
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: Gagal ambil data`);
-      }
-      
+      if (!response.ok) throw new Error(`Error ${response.status}: Gagal ambil data`);
       const result = await response.json();
-      
-      if (Array.isArray(result.data)) {
-        setServices(result.data);
-      } else if (Array.isArray(result)) {
-        setServices(result);
-      } else {
-        setServices([]);
-      }
-
+      if (Array.isArray(result.data)) setServices(result.data);
+      else if (Array.isArray(result)) setServices(result);
+      else setServices([]);
     } catch (err) {
       console.error('Fetch error:', err);
       setError(err.message);
@@ -85,43 +74,42 @@ export default function Services() {
   }, []);
 
   return (
-    <section id="services" className="bg-black py-24 px-4 border-t border-zinc-900">
+    <section id="services" className="bg-tintBlue px-4 py-24">
       <Container>
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Layanan Bengkel <span className="text-yellow-500">Resmi</span>
+        <div className="mb-16 text-center">
+          <span className="eyebrow">Daftar layanan</span>
+          <h2 className="mt-3 font-display text-5xl tracking-wide text-ink md:text-6xl">
+            LAYANAN <span className="text-accent">BENGKEL</span>
           </h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto">
-            Daftar harga transparan dan estimasi waktu pengerjaan yang akurat langsung dari sistem kami.
+          <p className="mx-auto mt-4 max-w-2xl text-slate-500">
+            Daftar harga transparan dan estimasi waktu pengerjaan yang akurat langsung dari
+            sistem kami.
           </p>
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+          <div className="flex items-center justify-center py-20">
+            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-accent" />
           </div>
         ) : error ? (
-          <div className="text-center bg-red-900/10 border border-red-900/30 p-8 rounded-xl max-w-lg mx-auto">
-            <p className="text-red-400 mb-4 font-medium">Gagal memuat layanan server lokal.</p>
-            <p className="text-zinc-600 text-sm mb-6 font-mono bg-black/30 p-2 rounded">{error}</p>
-            <button 
-                onClick={fetchServices}
-                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-red-900/20"
+          <div className="mx-auto max-w-lg rounded-4xl border border-white/70 bg-card p-8 text-center shadow-soft">
+            <p className="mb-4 font-medium text-accent">Gagal memuat layanan dari server.</p>
+            <p className="mb-6 rounded-xl bg-base p-2 font-mono text-sm text-muted shadow-soft-in-sm">{error}</p>
+            <button
+              onClick={fetchServices}
+              className="rounded-full bg-accent px-6 py-2.5 font-semibold text-white shadow-[0_8px_18px_rgba(224,70,59,0.35)] transition hover:bg-accentDark active:scale-[0.98]"
             >
-                Coba Lagi
+              Coba lagi
             </button>
           </div>
         ) : services.length === 0 ? (
-           <div className="text-center py-16 bg-zinc-900/30 border border-zinc-800 rounded-2xl">
-              <p className="text-zinc-500">Belum ada layanan yang tersedia di database.</p>
-           </div>
+          <div className="mx-auto max-w-lg rounded-4xl border border-white/70 bg-card p-10 text-center shadow-soft">
+            <p className="text-muted">Belum ada layanan yang tersedia di database.</p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {services.map((service, index) => (
-              <ServiceCard
-                key={service.id || index}
-                service={service}
-              />
+              <ServiceCard key={service.id || index} service={service} />
             ))}
           </div>
         )}
