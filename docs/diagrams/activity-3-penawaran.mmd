@@ -1,0 +1,20 @@
+flowchart TD
+  S([Mulai]):::se --> B1[/"Admin: susun penawaran + item"/]:::adm
+  B1 --> B2["Hitung grand total, simpan - Sent + items"]:::sis
+  B2 --> B3[/"Member: buka & lihat detail"/]:::mem
+  B3 --> D1{Respon member?}:::dec
+  D1 -- Tolak --> T1["Status proposal - Rejected"]:::sis
+  T1 --> EN
+  D1 -- Terima --> B4["Cari service Custom Project - fallback service pertama"]:::sis
+  B4 --> D2{Service ada?}:::dec
+  D2 -- Tidak --> E1["Belum ada service - 500"]:::err
+  D2 -- Ya --> B5["Buat transaksi - amount = total, poin, link proposal"]:::sis
+  B5 --> B6["Status proposal - Converted"]:::sis
+  B6 --> EN([Selesai]):::se
+
+  classDef adm fill:#EEEDFE,stroke:#534AB7,color:#26215C
+  classDef mem fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+  classDef sis fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef dec fill:#FAEEDA,stroke:#BA7517,color:#633806
+  classDef err fill:#FCEBEB,stroke:#A32D2D,color:#501313
+  classDef se fill:#EAF3DE,stroke:#3B6D11,color:#173404

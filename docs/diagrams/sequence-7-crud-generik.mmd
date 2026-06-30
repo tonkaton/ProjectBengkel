@@ -1,0 +1,22 @@
+sequenceDiagram
+  actor User as Admin/Member
+  participant FE as Frontend
+  participant MW as middleware auth/admin
+  participant API as Controller
+  participant DB as Database
+  User->>FE: aksi tambah / lihat / ubah / hapus
+  FE->>MW: request + JWT
+  MW->>MW: verifikasi token & role
+  alt token/role tidak valid
+    MW-->>FE: 401 / 403 akses ditolak
+  else berhak
+    MW->>API: teruskan request
+    API->>DB: insert / select / update / delete
+    DB-->>API: hasil operasi
+    alt gagal / tidak ditemukan
+      API-->>FE: 400 / 404 / 500
+    else berhasil
+      API-->>FE: 200 data (JSON)
+      FE-->>User: tampilkan data terbaru
+    end
+  end

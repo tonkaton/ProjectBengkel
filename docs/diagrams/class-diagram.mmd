@@ -1,0 +1,102 @@
+classDiagram
+  class User {
+    +int id
+    +string name
+    +string email
+    -string password
+    +enum role
+    +register()
+    +login()
+    +getMe()
+  }
+  class LoyaltyPoint {
+    +int id
+    +int points
+    +addPoints()
+  }
+  class PushSubscription {
+    +int id
+    +json subscription
+    +subscribe()
+  }
+  class Vehicle {
+    +int id
+    +string brand
+    +string model
+    +string plate
+    +int year
+    +crud()
+  }
+  class Service {
+    +int id
+    +string name
+    +int price
+    +int points
+    +crud()
+  }
+  class Booking {
+    +int id
+    +string name
+    +string phone
+    +string motor_type
+    +date booking_date
+    +enum status
+    +create()
+    +process()
+  }
+  class Transaction {
+    +int id
+    +int amount
+    +int points_earned
+    +enum status
+    +string queue_number
+    +create()
+    +updateStatus()
+  }
+  class Proposal {
+    +int id
+    +string title
+    +enum status
+    +int grand_total
+    +create()
+    +accept()
+    +reject()
+  }
+  class ProposalItem {
+    +int id
+    +string description
+    +enum type
+    +int price
+    +int qty
+    +int subtotal
+  }
+  class Reward {
+    +int id
+    +string name
+    +int points_needed
+    +int stock
+    +bool is_active
+    +exchange()
+  }
+  class Maintenance {
+    +int id
+    +string motor_name
+    +date next_service
+    +bool reminder_h7
+    +bool reminder_h3
+    +bool reminder_h1
+    +checkReminder()
+  }
+
+  User "1" --> "0..1" LoyaltyPoint : has
+  User "1" --> "0..1" PushSubscription : has
+  User "1" --> "*" Vehicle : owns
+  User "1" --> "*" Transaction : makes
+  User "1" --> "*" Proposal : receives
+  User "1" --> "*" Maintenance : schedules
+  Vehicle "1" --> "*" Proposal : subject of
+  Service "1" --> "*" Transaction : used in
+  Proposal "1" *-- "*" ProposalItem : items
+  Proposal "1" --> "0..1" Transaction : converts
+  Booking ..> Transaction : process()
+  Reward ..> Transaction : exchange()

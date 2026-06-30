@@ -1,0 +1,20 @@
+flowchart TD
+  S([Mulai]):::se --> B1[/"Member: pilih reward & klik tukar"/]:::mem
+  B1 --> B2["Ambil data reward"]:::sis
+  B2 --> D1{Reward tersedia?}:::dec
+  D1 -- Tidak --> E1["Tidak tersedia - 404"]:::err
+  D1 -- Ya --> D2{"Stok > 0?"}:::dec
+  D2 -- Tidak --> E2["Stok habis - 400"]:::err
+  D2 -- Ya --> B3["Ambil / buat poin user"]:::sis
+  B3 --> D3{Poin cukup?}:::dec
+  D3 -- Tidak --> E3["Poin tidak cukup - 400"]:::err
+  D3 -- Ya --> B4["Kurangi poin & stok"]:::sis
+  B4 --> B5["Catat transaksi penukaran - poin minus, Selesai"]:::sis
+  B5 --> B6[/"Tampilkan sisa poin"/]:::mem
+  B6 --> EN([Selesai]):::se
+
+  classDef mem fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+  classDef sis fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef dec fill:#FAEEDA,stroke:#BA7517,color:#633806
+  classDef err fill:#FCEBEB,stroke:#A32D2D,color:#501313
+  classDef se fill:#EAF3DE,stroke:#3B6D11,color:#173404

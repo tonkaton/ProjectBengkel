@@ -1,0 +1,17 @@
+flowchart TD
+  S([Mulai]):::se --> B1[/"Aktor: kirim permintaan CRUD"/]:::usr
+  B1 --> B2["Validasi token & role"]:::sis
+  B2 --> D1{Berhak?}:::dec
+  D1 -- Tidak --> E1["Akses ditolak - 401/403"]:::err
+  D1 -- Ya --> B3["Eksekusi ke database - insert/select/update/delete"]:::sis
+  B3 --> D2{Berhasil?}:::dec
+  D2 -- Tidak --> E2["Gagal - 400/404/500"]:::err
+  D2 -- Ya --> B4["Kembalikan hasil - JSON"]:::sis
+  B4 --> B5[/"Tampilkan data terbaru"/]:::usr
+  B5 --> EN([Selesai]):::se
+
+  classDef usr fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+  classDef sis fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef dec fill:#FAEEDA,stroke:#BA7517,color:#633806
+  classDef err fill:#FCEBEB,stroke:#A32D2D,color:#501313
+  classDef se fill:#EAF3DE,stroke:#3B6D11,color:#173404

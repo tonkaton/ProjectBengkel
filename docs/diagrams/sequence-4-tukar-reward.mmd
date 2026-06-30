@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor Member
+  participant FE as Frontend
+  participant API as rewardController
+  participant DB as Database
+  Member->>FE: pilih reward & klik tukar
+  FE->>API: POST /rewards/exchange/{id}
+  API->>DB: find Reward by id
+  DB-->>API: data reward
+  alt reward tidak aktif / stok habis
+    API-->>FE: 400/404 tidak tersedia
+  else tersedia
+    API->>DB: findOrCreate LoyaltyPoint user
+    DB-->>API: poin user
+    alt poin tidak cukup
+      API-->>FE: 400 poin tidak cukup
+    else poin cukup
+      API->>DB: kurangi poin user
+      API->>DB: kurangi stok reward
+      API->>DB: create Transaction (poin minus, Selesai)
+      API-->>FE: 200 sisa poin
+    end
+  end

@@ -1,0 +1,19 @@
+sequenceDiagram
+  actor Admin
+  participant FE as Frontend
+  participant API as transactionController
+  participant DB as Database
+  Admin->>FE: ubah status transaksi
+  FE->>API: PUT /transactions/{id}/status
+  API->>API: cek role admin & status valid
+  alt tidak valid
+    API-->>FE: 400 / 403
+  else valid
+    API->>DB: find Transaction by id
+    DB-->>API: data transaksi
+    opt status = Selesai (sebelumnya belum)
+      API->>DB: increment LoyaltyPoint (+points_earned)
+    end
+    API->>DB: save status baru
+    API-->>FE: 200 status diperbarui
+  end
