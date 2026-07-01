@@ -1,0 +1,25 @@
+sequenceDiagram
+  actor Tamu
+  participant FE as Frontend
+  participant API as bookingController
+  participant DB as Database
+  actor Admin
+  Tamu->>FE: isi form booking
+  FE->>API: POST /bookings
+  alt data tidak lengkap
+    API-->>FE: 400 data tidak lengkap
+  else data lengkap
+    API->>DB: create Booking (Pending)
+    API->>DB: count booking tanggal tsb
+    DB-->>API: jumlah antrian
+    API-->>FE: 201 + nomor antrian
+  end
+  Note over Admin,API: Admin memproses booking
+  Admin->>FE: input plat & pilih service
+  FE->>API: POST /bookings/{id}/process
+  API->>DB: find Booking
+  API->>DB: findOrCreate User (member)
+  API->>DB: findOrCreate Vehicle
+  API->>DB: create Transaction (Menunggu)
+  API->>DB: update Booking = Processed
+  API-->>FE: 200 member & transaksi dibuat

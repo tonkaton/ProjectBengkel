@@ -1,0 +1,102 @@
+erDiagram
+  USER ||--o| LOYALTYPOINT : has
+  USER ||--o| PUSHSUBSCRIPTION : has
+  USER ||--o{ VEHICLE : owns
+  USER ||--o{ TRANSACTION : makes
+  USER ||--o{ PROPOSAL : receives
+  USER ||--o{ MAINTENANCE : schedules
+  VEHICLE ||--o{ PROPOSAL : "subject of"
+  SERVICE ||--o{ TRANSACTION : "used in"
+  PROPOSAL ||--o{ PROPOSAL_ITEM : contains
+  PROPOSAL ||--o| TRANSACTION : "converts to"
+
+  USER {
+    int id PK
+    string name
+    string email UK
+    string password
+    enum role "admin / user"
+    datetime createdAt
+  }
+  LOYALTYPOINT {
+    int id PK
+    int UserId FK
+    int points
+  }
+  PUSHSUBSCRIPTION {
+    int id PK
+    int UserId FK
+    json subscription
+  }
+  VEHICLE {
+    int id PK
+    int UserId FK
+    string brand
+    string model
+    string plate UK
+    int year
+    string color
+  }
+  SERVICE {
+    int id PK
+    string name
+    int price
+    int points
+    string duration
+  }
+  TRANSACTION {
+    int id PK
+    int UserId FK
+    int ServiceId FK
+    int ProposalId FK
+    int amount
+    int points_earned
+    enum status "Menunggu/Proses/Selesai"
+    string queue_number
+    text note
+  }
+  PROPOSAL {
+    int id PK
+    int UserId FK
+    int VehicleId FK
+    string title
+    enum status "Draft..Converted"
+    int grand_total
+    text admin_note
+  }
+  PROPOSAL_ITEM {
+    int id PK
+    int ProposalId FK
+    string description
+    enum type "Part / Service"
+    int price
+    int qty
+    int subtotal
+  }
+  MAINTENANCE {
+    int id PK
+    int UserId FK
+    string motor_name
+    datetime service_date
+    datetime next_service
+    boolean reminder_h7
+    boolean reminder_h3
+    boolean reminder_h1
+  }
+  REWARD {
+    int id PK
+    string name
+    int points_needed
+    int stock
+    boolean is_active
+    string image_url
+  }
+  BOOKING {
+    int id PK
+    string name
+    string phone
+    string motor_type
+    string service_type
+    date booking_date
+    enum status "Pending/Processed/Cancelled"
+  }

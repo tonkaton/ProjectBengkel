@@ -1,0 +1,18 @@
+flowchart TD
+  S([Mulai]):::se --> B1[/"Admin: pilih transaksi & set status"/]:::adm
+  B1 --> D1{Status valid?}:::dec
+  D1 -- Tidak --> E1["Status tidak valid - 400/403"]:::err
+  D1 -- Ya --> B2["Ambil transaksi by id"]:::sis
+  B2 --> D2{Transaksi ada?}:::dec
+  D2 -- Tidak --> E2["Tidak ditemukan - 404"]:::err
+  D2 -- Ya --> D3{"Jadi Selesai & belum selesai?"}:::dec
+  D3 -- Ya --> B3["Tambah poin loyalty user"]:::sis
+  D3 -- Tidak --> B4
+  B3 --> B4["Simpan status baru"]:::sis
+  B4 --> EN([Selesai]):::se
+
+  classDef adm fill:#EEEDFE,stroke:#534AB7,color:#26215C
+  classDef sis fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef dec fill:#FAEEDA,stroke:#BA7517,color:#633806
+  classDef err fill:#FCEBEB,stroke:#A32D2D,color:#501313
+  classDef se fill:#EAF3DE,stroke:#3B6D11,color:#173404

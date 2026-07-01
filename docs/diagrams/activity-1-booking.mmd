@@ -1,0 +1,23 @@
+flowchart TD
+  S([Mulai]):::se --> B1[/"Tamu: isi form booking"/]:::tamu
+  B1 --> B2[/"Tamu: submit booking"/]:::tamu
+  B2 --> D1{Data lengkap?}:::dec
+  D1 -- Tidak --> E1["Tampilkan pesan error"]:::err
+  E1 --> B1
+  D1 -- Ya --> B3["Simpan booking - status Pending"]:::sis
+  B3 --> B4["Generate no. antrian + konfirmasi"]:::sis
+  B4 --> B5[/"Admin: pilih booking, input plat & service"/]:::adm
+  B5 --> D2{Plat diisi?}:::dec
+  D2 -- Tidak --> E2["Tolak: plat wajib diisi"]:::err
+  D2 -- Ya --> B6["Cek / buat akun member"]:::sis
+  B6 --> B7["Cek / buat data kendaraan"]:::sis
+  B7 --> B8["Buat transaksi - Menunggu + poin"]:::sis
+  B8 --> B9["Update booking - Processed"]:::sis
+  B9 --> EN([Selesai]):::se
+
+  classDef tamu fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+  classDef adm fill:#EEEDFE,stroke:#534AB7,color:#26215C
+  classDef sis fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef dec fill:#FAEEDA,stroke:#BA7517,color:#633806
+  classDef err fill:#FCEBEB,stroke:#A32D2D,color:#501313
+  classDef se fill:#EAF3DE,stroke:#3B6D11,color:#173404

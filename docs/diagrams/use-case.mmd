@@ -1,0 +1,45 @@
+flowchart LR
+  Tamu(["Tamu"]):::actor
+  Member(["Member"]):::actor
+  Admin(["Admin"]):::actor
+  Sistem(["Sistem (cron)"]):::actor
+
+  subgraph SB["Sistem Bengkel — Botak Engine Speed"]
+    UC1(["Kirim booking"]):::uc
+    UC2(["Daftar akun"]):::uc
+    UC3(["Login"]):::uc
+    UC4(["Kelola kendaraan"]):::uc
+    UC5(["Respon penawaran"]):::uc
+    UC6(["Lihat transaksi"]):::uc
+    UC7(["Tukar reward"]):::uc
+    UC8(["Lihat reminder"]):::uc
+    UC9(["Proses booking"]):::uc
+    UC10(["Kelola user"]):::uc
+    UC11(["Kelola layanan"]):::uc
+    UC12(["Buat penawaran"]):::uc
+    UC13(["Kelola transaksi"]):::uc
+    UC14(["Kelola reward"]):::uc
+    UC15(["Kelola reminder"]):::uc
+    UC16(["Kirim notifikasi"]):::uc
+  end
+
+  Tamu --- UC1
+  Tamu --- UC2
+  Tamu --- UC3
+  Member --- UC3
+  Member --- UC4
+  Member --- UC5
+  Member --- UC6
+  Member --- UC7
+  Member --- UC8
+  Admin --- UC9
+  Admin --- UC10
+  Admin --- UC11
+  Admin --- UC12
+  Admin --- UC13
+  Admin --- UC14
+  Admin --- UC15
+  Sistem --- UC16
+
+  classDef actor fill:#CECBF6,stroke:#3C3489,color:#26215C,font-weight:bold
+  classDef uc fill:#E1F5EE,stroke:#0F6E56,color:#04342C

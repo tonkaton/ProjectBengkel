@@ -1,0 +1,27 @@
+sequenceDiagram
+  actor User
+  participant FE as Frontend
+  participant API as authController
+  participant DB as Database
+  Note over User,DB: Daftar akun
+  User->>FE: isi nama, email, password
+  FE->>API: POST /auth/register
+  API->>API: hash password
+  API->>DB: create User
+  API->>DB: create LoyaltyPoint (0)
+  API-->>FE: register ok
+  Note over User,DB: Login
+  User->>FE: isi email & password
+  FE->>API: POST /auth/login
+  API->>DB: findOne User by email
+  alt user tidak ada
+    API-->>FE: 404 user tidak ada
+  else user ditemukan
+    API->>API: compare password
+    alt password salah
+      API-->>FE: 401 password salah
+    else password cocok
+      API->>API: sign JWT token
+      API-->>FE: 200 token + data user
+    end
+  end

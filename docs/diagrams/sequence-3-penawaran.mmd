@@ -1,0 +1,27 @@
+sequenceDiagram
+  actor Admin
+  actor Member
+  participant FE as Frontend
+  participant API as proposalController
+  participant DB as Database
+  Admin->>FE: susun penawaran + item
+  FE->>API: POST /proposals
+  API->>DB: create Proposal (Sent)
+  API->>DB: bulkCreate ProposalItem
+  API-->>FE: 201 proposal terkirim
+  Member->>FE: buka Penawaran Saya
+  FE->>API: GET /proposals
+  API->>DB: findAll by user
+  DB-->>API: daftar proposal
+  API-->>FE: tampilkan penawaran
+  alt Member menerima
+    FE->>API: POST /proposals/{id}/accept
+    API->>DB: cari service Custom Project
+    API->>DB: create Transaction (amount=grand_total, Menunggu)
+    API->>DB: update Proposal = Converted
+    API-->>FE: tawaran diterima
+  else Member menolak
+    FE->>API: POST /proposals/{id}/reject
+    API->>DB: update Proposal = Rejected
+    API-->>FE: penawaran ditolak
+  end

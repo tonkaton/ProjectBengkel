@@ -1,0 +1,17 @@
+flowchart TD
+  S(["Trigger: cron tiap jam"]):::se --> B1["Tentukan rentang: hari ini s/d +7 hari"]:::sis
+  B1 --> B2["Ambil jadwal servis di rentang - reminder belum lengkap"]:::sis
+  B2 --> D1{Masih ada jadwal?}:::dec
+  D1 -- Tidak --> EN([Selesai]):::se
+  D1 -- Ya --> D2{Punya subscription?}:::dec
+  D2 -- Tidak --> D1
+  D2 -- Ya --> B3["Hitung selisih hari - diff"]:::sis
+  B3 --> D3{"diff = 7/3/1 & belum kirim?"}:::dec
+  D3 -- Tidak --> D1
+  D3 -- Ya --> B4["Kirim push ke Member"]:::sis
+  B4 --> B5["Tandai reminder_hX = true"]:::sis
+  B5 --> D1
+
+  classDef sis fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+  classDef dec fill:#FAEEDA,stroke:#BA7517,color:#633806
+  classDef se fill:#EAF3DE,stroke:#3B6D11,color:#173404

@@ -1,0 +1,24 @@
+sequenceDiagram
+  actor Member
+  participant FE as Frontend
+  participant PUSH as pushController
+  participant CRON as reminderJob
+  participant DB as Database
+  participant WP as WebPush
+  Note over Member,DB: Member berlangganan notifikasi
+  Member->>FE: aktifkan notifikasi
+  FE->>PUSH: POST /push/subscribe
+  PUSH->>DB: upsert PushSubscription
+  PUSH-->>FE: subscribed
+  Note over CRON,WP: Job berjalan otomatis
+  loop tiap jam
+    CRON->>DB: findAll Maintenance (next_service <= +7 hari)
+    DB-->>CRON: daftar jadwal
+    loop tiap jadwal
+      CRON->>CRON: hitung selisih hari (diff)
+      opt diff 7/3/1 & belum kirim & ada subscription
+        CRON->>WP: sendNotification ke Member
+        CRON->>DB: set reminder_hX = true
+      end
+    end
+  end
