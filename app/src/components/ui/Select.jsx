@@ -7,25 +7,30 @@ const Select = ({
   options = [],
   placeholder = 'Pilih...',
   className = '',
+  children,
   ...props
 }) => {
   return (
     <div className={className}>
-      {label && (
-        <label className="block text-sm text-gray-300 mb-1">{label}</label>
-      )}
+      {label && <label className="mb-1.5 block text-sm font-medium text-slate-600">{label}</label>}
       <select
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded text-white outline-none focus:border-yellow-500 transition-colors"
+        className="w-full appearance-none rounded-2xl bg-base px-4 py-3 text-ink shadow-soft-in outline-none"
         {...props}
       >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
+        {children ? (
+          children
+        ) : (
+          <>
+            <option value="">{placeholder}</option>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </>
+        )}
       </select>
     </div>
   );

@@ -21,19 +21,11 @@ const UserForm = ({ form, onChange, onSubmit, onCancel, isEdit = false }) => {
         disabled={isEdit} // Opsional: Biasanya email dikunci pas edit biar gak kacau data uniknya
       />
 
-      {/* 👇 TAMBAHAN: PILIHAN ROLE */}
-      <div className="space-y-1">
-        <label className="text-sm font-medium text-zinc-400">Role</label>
-        {/* Kalau di ui/index.js ada component Select pake itu, kalau ga ada pake <select> biasa class tailwind */}
-        <select
-          value={form.role || 'user'}
-          onChange={(e) => onChange('role', e.target.value)}
-          className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500"
-        >
-          <option value="user">User (Pelanggan)</option>
-          <option value="admin">Admin (Pengelola)</option>
-        </select>
-      </div>
+      {/* PILIHAN ROLE */}
+      <Select label="Role" value={form.role || 'user'} onChange={(e) => onChange('role', e.target.value)}>
+        <option value="user">User (Pelanggan)</option>
+        <option value="admin">Admin (Pengelola)</option>
+      </Select>
 
       <div className="space-y-1">
         <Input
@@ -44,7 +36,7 @@ const UserForm = ({ form, onChange, onSubmit, onCancel, isEdit = false }) => {
           placeholder={isEdit ? "Kosongkan jika tidak ingin mengubah" : "Minimal 6 karakter"}
         />
         {isEdit && (
-          <p className="text-xs text-yellow-500/80 italic">
+          <p className="text-xs italic text-amber-600">
             * Isi hanya jika ingin mengganti password user ini.
           </p>
         )}

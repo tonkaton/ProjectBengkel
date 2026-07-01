@@ -1,39 +1,31 @@
 import React, { useState } from 'react';
-import { Calendar, Smartphone, Bike, CheckCircle, AlertCircle } from 'lucide-react';
+import { Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useData } from '../../contexts';
 import { useSearch } from '../../hooks';
 import { SearchInput, Button, Modal, Input, Select } from '../ui';
 
 const BookingsPage = () => {
   const { bookings, services, processBooking } = useData();
-  const { searchQuery, setSearchQuery, filteredData: filteredBookings } = useSearch(
-    bookings,
-    ['name', 'phone', 'motor_type', 'service_type']
-  );
+  const { searchQuery, setSearchQuery, filteredData: filteredBookings } = useSearch(bookings, [
+    'name',
+    'phone',
+    'motor_type',
+    'service_type',
+  ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [processForm, setProcessForm] = useState({ plate_number: '', service_id: '' });
   const [loadingProcess, setLoadingProcess] = useState(false);
-  
   const [matchedServiceName, setMatchedServiceName] = useState(null);
 
   const handleOpenProcess = (booking) => {
     setSelectedBooking(booking);
-
-    const matchedService = services.find(s => s.name === booking.service_type);
-
-    setProcessForm({ 
-      plate_number: '', 
-      service_id: matchedService ? matchedService.id : '' 
-    });
-
-    if (matchedService) {
-      setMatchedServiceName(`${matchedService.name} - Rp ${matchedService.price.toLocaleString('id-ID')}`);
-    } else {
-      setMatchedServiceName(null);
-    }
-    
+    const matchedService = services.find((s) => s.name === booking.service_type);
+    setProcessForm({ plate_number: '', service_id: matchedService ? matchedService.id : '' });
+    setMatchedServiceName(
+      matchedService ? `${matchedService.name} - Rp ${matchedService.price.toLocaleString('id-ID')}` : null
+    );
     setIsModalOpen(true);
   };
 
@@ -56,92 +48,75 @@ const BookingsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-white">Booking Masuk</h2>
-          <p className="text-zinc-400 text-sm mt-1">Kelola antrian booking dari website</p>
+          <span className="eyebrow">Antrian website</span>
+          <h1 className="mt-1 font-display text-4xl tracking-wide text-ink">BOOKING MASUK</h1>
         </div>
         <div className="w-full max-w-xs">
           <SearchInput value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Cari nama / motor..." />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredBookings.length === 0 && (
-          <div className="col-span-full text-center py-12 text-zinc-500 bg-zinc-800/50 rounded-xl border border-dashed border-zinc-700">
+          <div className="col-span-full rounded-4xl border-2 border-dashed border-black/10 py-12 text-center text-muted">
             Tidak ada data booking.
           </div>
         )}
 
         {filteredBookings.map((booking) => {
           const isPending = booking.status === 'Pending';
-
           return (
             <div
               key={booking.id}
-              className={`
-                relative p-5 rounded-xl border transition-colors duration-300
-                ${isPending
-                  ? 'bg-zinc-800 border-zinc-700 hover:border-yellow-500 cursor-pointer group'
-                  : 'bg-zinc-900 border-zinc-800 opacity-75 cursor-default'}
-              `}
+              className={`rounded-4xl border border-white/70 bg-card p-5 shadow-soft transition-all ${
+                isPending ? 'cursor-pointer hover:shadow-soft-lg' : 'opacity-80'
+              }`}
               onClick={isPending ? () => handleOpenProcess(booking) : undefined}
             >
-              {/* Overlay gradient HANYA untuk Pending */}
-              {isPending && (
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-500/0 to-yellow-500/0 group-hover:from-yellow-500/5 group-hover:to-transparent transition-opacity duration-500 pointer-events-none" />
-              )}
-
-              <div className="relative flex justify-between items-start mb-4">
+              <div className="mb-4 flex items-start justify-between">
                 <div>
-                  <h4 
-                    className={`font-bold text-lg transition-colors ${
-                      isPending ? 'text-white group-hover:text-yellow-300' : 'text-zinc-400'
-                    }`}
-                  >
-                    {booking.name}
-                  </h4>
-                  <div className="flex items-center gap-2 text-zinc-400 text-sm mt-1">
-                    <Smartphone className="w-3 h-3" /> {booking.phone}
+                  <h4 className="text-lg font-semibold text-ink">{booking.name}</h4>
+                  <div className="mt-1 flex items-center gap-2 text-sm text-muted">
+                    <Smartphone className="h-3 w-3" /> {booking.phone}
                   </div>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded text-xs font-bold ${
-                    isPending
-                      ? 'bg-yellow-900 text-yellow-300 group-hover:bg-yellow-800 group-hover:text-yellow-200'
-                      : 'bg-green-900 text-green-300'
-                  } transition-colors`}
+                  className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                    isPending ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+                  }`}
                 >
                   {booking.status}
                 </span>
               </div>
 
-              <div className="space-y-3 text-sm text-zinc-300 border-t border-zinc-700/50 pt-4 mb-4">
+              <div className="mb-4 space-y-2.5 border-t border-black/5 pt-4 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Motor:</span> 
-                  <span className="text-white">{booking.motor_type}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Service:</span> 
-                  <span className="text-yellow-400">{booking.service_type}</span>
+                  <span className="text-muted">Motor:</span>
+                  <span className="font-medium text-ink">{booking.motor_type}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Tgl:</span> 
-                  <span>{booking.booking_date}</span>
+                  <span className="text-muted">Service:</span>
+                  <span className="font-medium text-accent">{booking.service_type}</span>
                 </div>
-                <div className="bg-zinc-900/50 p-2 rounded text-xs text-zinc-400 italic mt-2">
-                  "{booking.complaint}"
+                <div className="flex justify-between">
+                  <span className="text-muted">Tgl:</span>
+                  <span className="font-mono text-slate-600">{booking.booking_date}</span>
                 </div>
+                {booking.complaint && (
+                  <div className="mt-2 rounded-xl bg-base p-2.5 text-xs italic text-muted shadow-soft-in-sm">
+                    "{booking.complaint}"
+                  </div>
+                )}
               </div>
 
               {isPending ? (
-                <Button
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold transition-all duration-300 group-hover:shadow-md group-hover:shadow-yellow-500/30"
-                >
-                  <CheckCircle className="w-4 h-4 mr-2" /> Proses Booking
-                </Button>
+                <button className="flex w-full items-center justify-center gap-2 rounded-full bg-accent py-2.5 font-semibold text-white shadow-[0_8px_18px_rgba(224,70,59,0.30)] transition active:scale-[0.98]">
+                  <CheckCircle className="h-4 w-4" /> Proses Booking
+                </button>
               ) : (
-                <div className="w-full text-center py-2 text-green-500 text-sm font-semibold bg-green-900/10 rounded">
+                <div className="w-full rounded-full bg-emerald-50 py-2 text-center text-sm font-semibold text-emerald-600">
                   Sudah Diproses
                 </div>
               )}
@@ -151,55 +126,48 @@ const BookingsPage = () => {
       </div>
 
       <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} title="Proses Booking Tamu">
-        <form onSubmit={handleProcessSubmit} className="space-y-4 mt-2">
-          <div className="bg-zinc-800 p-3 rounded border border-zinc-700 text-sm space-y-1">
-            <p className="text-zinc-400">Nama: <span className="text-white font-bold">{selectedBooking?.name}</span></p>
-            <p className="text-zinc-400">Motor: <span className="text-white">{selectedBooking?.motor_type}</span></p>
-            <p className="text-zinc-400">Request Tamu: <span className="text-yellow-400 font-bold">"{selectedBooking?.service_type}"</span></p>
+        <form onSubmit={handleProcessSubmit} className="mt-2 space-y-4">
+          <div className="space-y-1 rounded-2xl bg-base p-4 text-sm shadow-soft-in-sm">
+            <p className="text-muted">Nama: <span className="font-semibold text-ink">{selectedBooking?.name}</span></p>
+            <p className="text-muted">Motor: <span className="text-ink">{selectedBooking?.motor_type}</span></p>
+            <p className="text-muted">Request Tamu: <span className="font-semibold text-accent">"{selectedBooking?.service_type}"</span></p>
           </div>
 
-          <div className="bg-blue-900/20 text-blue-200 p-3 rounded text-xs border border-blue-900/50">
+          <div className="rounded-2xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-700">
             Sistem akan otomatis membuat <b>User Baru</b> dan <b>Data Kendaraan</b>.
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Plat Nomor <span className="text-red-500">*</span></label>
-            <Input 
-              value={processForm.plate_number} 
-              onChange={(e) => setProcessForm({ ...processForm, plate_number: e.target.value })} 
-              placeholder="B 1234 XYZ" 
-              className="uppercase" 
-              required 
+            <label className="mb-1.5 block text-sm font-medium text-slate-600">
+              Plat Nomor <span className="text-accent">*</span>
+            </label>
+            <Input
+              value={processForm.plate_number}
+              onChange={(e) => setProcessForm({ ...processForm, plate_number: e.target.value })}
+              placeholder="B 1234 XYZ"
+              className="uppercase"
+              required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Konfirmasi Layanan & Harga</label>
-            
+            <label className="mb-1.5 block text-sm font-medium text-slate-600">Konfirmasi Layanan &amp; Harga</label>
             {matchedServiceName ? (
-              <div className="flex items-center justify-between p-3 bg-emerald-900/20 border border-emerald-500/30 rounded text-emerald-300 text-sm">
+              <div className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle className="h-4 w-4 text-emerald-500" />
                   <span className="font-semibold">{matchedServiceName}</span>
                 </div>
-                <button 
-                  type="button" 
-                  onClick={() => setMatchedServiceName(null)} 
-                  className="text-xs underline text-emerald-500 hover:text-emerald-400"
-                >
+                <button type="button" onClick={() => setMatchedServiceName(null)} className="text-xs font-medium text-emerald-600 underline">
                   Ubah?
                 </button>
               </div>
             ) : (
               <div className="space-y-1">
-                <div className="text-xs text-orange-400 mb-1 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" />
-                  Pilih layanan secara manual:
+                <div className="mb-1 flex items-center gap-1 text-xs text-amber-600">
+                  <AlertCircle className="h-3 w-3" /> Pilih layanan secara manual:
                 </div>
-                <Select 
-                  value={processForm.service_id} 
-                  onChange={(e) => setProcessForm({ ...processForm, service_id: e.target.value })}
-                >
+                <Select value={processForm.service_id} onChange={(e) => setProcessForm({ ...processForm, service_id: e.target.value })}>
                   <option value="">-- Pilih Layanan --</option>
                   {services.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -211,9 +179,13 @@ const BookingsPage = () => {
             )}
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-zinc-700">
-            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>Batal</Button>
-            <Button type="submit" isLoading={loadingProcess}>Simpan & Proses</Button>
+          <div className="flex justify-end gap-3 border-t border-black/5 pt-4">
+            <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
+              Batal
+            </Button>
+            <Button type="submit" isLoading={loadingProcess}>
+              Simpan &amp; Proses
+            </Button>
           </div>
         </form>
       </Modal>
