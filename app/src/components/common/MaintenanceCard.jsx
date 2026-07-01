@@ -33,9 +33,9 @@ const MaintenanceCard = ({ item, onDelete }) => {
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/70 bg-card shadow-soft transition-all hover:shadow-soft-lg sm:flex-row">
+    <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-card shadow-soft transition-all hover:shadow-soft-lg sm:flex-row">
       {/* 1. STATUS INDICATOR */}
-      <div className={`flex shrink-0 flex-row items-center justify-center gap-2 border-b border-dashed border-black/10 p-4 sm:w-24 sm:flex-col sm:border-b-0 sm:border-r ${tone.slot}`}>
+      <div className={`flex shrink-0 flex-row items-center justify-center gap-2 border-b border-dashed border-hair p-4 sm:w-24 sm:flex-col sm:border-b-0 sm:border-r ${tone.slot}`}>
         <div className="flex flex-col items-center">
           <span className={`mb-0.5 text-[10px] font-bold uppercase tracking-widest ${tone.label}`}>Service</span>
           <div className={`font-mono text-2xl font-bold leading-none sm:text-3xl ${tone.num}`}>
@@ -51,7 +51,7 @@ const MaintenanceCard = ({ item, onDelete }) => {
       <div className="flex min-w-0 flex-1 items-center gap-4 p-4">
         <div
           className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl sm:h-12 sm:w-12 ${
-            isDeletedUser ? 'bg-red-100 text-red-500' : 'bg-base text-slate-500 shadow-soft-in-sm'
+            isDeletedUser ? 'bg-red-100 text-red-500' : 'bg-base text-ink2 shadow-soft-in-sm'
           }`}
         >
           {isDeletedUser ? <UserX className="h-5 w-5 sm:h-6 sm:w-6" /> : <Wrench className="h-5 w-5 sm:h-6 sm:w-6" />}
@@ -66,7 +66,7 @@ const MaintenanceCard = ({ item, onDelete }) => {
           {isAdmin && (
             <p className="mb-1 flex items-center gap-1 text-xs">
               <span className="text-muted">Pelanggan:</span>
-              <span className={`font-medium ${isDeletedUser ? 'italic text-accent' : 'text-slate-600'}`}>
+              <span className={`font-medium ${isDeletedUser ? 'italic text-accent' : 'text-ink2'}`}>
                 {customerName}
               </span>
             </p>
@@ -88,7 +88,7 @@ const MaintenanceCard = ({ item, onDelete }) => {
       </div>
 
       {/* 3. STATUS & ACTION */}
-      <div className="flex flex-row items-center justify-between gap-3 border-t border-black/5 p-4 sm:flex-col sm:items-end sm:justify-center sm:gap-1 sm:border-t-0 sm:pl-0">
+      <div className="flex flex-row items-center justify-between gap-3 border-t border-hair p-4 sm:flex-col sm:items-end sm:justify-center sm:gap-1 sm:border-t-0 sm:pl-0">
         <div className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${tone.pill}`}>
           {getStatusText()}
         </div>

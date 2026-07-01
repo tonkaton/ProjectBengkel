@@ -36,7 +36,7 @@ export function SectionTitle({
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.12 }}
           viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-2xl text-lg text-slate-500"
+          className="mx-auto mt-4 max-w-2xl text-lg text-ink2"
         >
           {subtitle}
         </motion.p>

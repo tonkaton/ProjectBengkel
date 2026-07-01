@@ -4,7 +4,7 @@ import { COMPANY } from '../../constants';
 
 function ContactCard({ icon: Icon, chip, title, children }) {
   return (
-    <div className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-soft-lg">
+    <div className="rounded-4xl border border-line bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-soft-lg">
       <div className="mb-3 flex items-center gap-3">
         <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${chip} shadow-soft-sm`}>
           <Icon className="h-5 w-5" />
@@ -28,12 +28,12 @@ export default function Contact() {
           <h2 className="mt-3 font-display text-5xl tracking-wide text-ink md:text-6xl">
             KONTAK &amp; <span className="text-accent">LOKASI</span>
           </h2>
-          <p className="mt-4 text-slate-500">Kami siap melayani kebutuhan servis motor Anda.</p>
+          <p className="mt-4 text-ink2">Kami siap melayani kebutuhan servis motor Anda.</p>
         </div>
 
         <div className="mb-12 grid grid-cols-1 gap-5 sm:grid-cols-2">
           <ContactCard icon={MapPin} chip="bg-blue-100 text-blue-600" title="Alamat bengkel">
-            <p className="text-sm text-slate-600">{COMPANY.address}</p>
+            <p className="text-sm text-ink2">{COMPANY.address}</p>
             <p className="mt-1 text-xs text-muted">Mudah diakses dari berbagai area.</p>
           </ContactCard>
 
@@ -48,18 +48,18 @@ export default function Contact() {
           </ContactCard>
 
           <ContactCard icon={Clock} chip="bg-amber-100 text-amber-600" title="Jam operasional">
-            <p className="text-sm text-slate-600">{COMPANY.operationalHours.weekday}</p>
-            <p className="text-sm text-slate-600">{COMPANY.operationalHours.weekend}</p>
+            <p className="text-sm text-ink2">{COMPANY.operationalHours.weekday}</p>
+            <p className="text-sm text-ink2">{COMPANY.operationalHours.weekend}</p>
           </ContactCard>
 
           <ContactCard icon={Bike} chip="bg-red-100 text-red-600" title="Layanan profesional">
-            <p className="text-sm text-slate-600">Servis cepat, berkualitas, dan terpercaya.</p>
+            <p className="text-sm text-ink2">Servis cepat, berkualitas, dan terpercaya.</p>
           </ContactCard>
         </div>
 
-        <div className="rounded-4xl border border-white/70 bg-card p-8 text-center shadow-soft-lg sm:p-10">
+        <div className="rounded-4xl border border-line bg-card p-8 text-center shadow-soft-lg sm:p-10">
           <h3 className="font-display text-3xl tracking-wide text-ink">BUTUH BANTUAN SEGERA?</h3>
-          <p className="mx-auto mt-3 max-w-md text-slate-500">
+          <p className="mx-auto mt-3 max-w-md text-ink2">
             Tim kami siap membantu Anda dengan layanan servis motor terbaik.
           </p>
           <a

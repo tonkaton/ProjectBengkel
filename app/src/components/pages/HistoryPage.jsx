@@ -28,7 +28,7 @@ const HistoryPage = () => {
       {/* LIST */}
       <div className="space-y-4">
         {userTransactions.length === 0 ? (
-          <div className="rounded-4xl border-2 border-dashed border-black/10 py-16 text-center text-muted">
+          <div className="rounded-4xl border-2 border-dashed border-hair py-16 text-center text-muted">
             Belum ada riwayat servis.
           </div>
         ) : (
@@ -37,7 +37,7 @@ const HistoryPage = () => {
             return (
               <div
                 key={t.id}
-                className="flex flex-col justify-between rounded-3xl border border-white/70 bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
+                className="flex flex-col justify-between rounded-3xl border border-line bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
               >
                 <div className="flex items-center gap-5">
                   <div
@@ -65,7 +65,7 @@ const HistoryPage = () => {
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between border-t border-black/5 pt-4 text-right sm:mt-0 sm:block sm:border-none sm:pt-0">
+                <div className="mt-4 flex items-center justify-between border-t border-hair pt-4 text-right sm:mt-0 sm:block sm:border-none sm:pt-0">
                   <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted">Poin Didapat</p>
                   <span className="font-mono text-2xl font-bold tracking-tight text-emerald-600">+{t.points_earned} XP</span>
                 </div>

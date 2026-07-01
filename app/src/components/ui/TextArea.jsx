@@ -11,7 +11,7 @@ const TextArea = ({
 }) => {
   return (
     <div className={className}>
-      {label && <label className="mb-1.5 block text-sm font-medium text-slate-600">{label}</label>}
+      {label && <label className="mb-1.5 block text-sm font-medium text-ink2">{label}</label>}
       <textarea
         value={value}
         onChange={onChange}

@@ -72,7 +72,7 @@ const VehiclesPage = ({ onOpenModal }) => {
 
       {/* CONTENT */}
       {paginatedVehicles.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-black/10 px-4 py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-hair px-4 py-16 text-center">
           <Bike className="mb-5 h-12 w-12 text-slate-300" />
           <h3 className="mb-2 text-xl font-semibold text-ink">Data kosong</h3>
           <p className="max-w-md text-sm text-muted">
@@ -82,9 +82,9 @@ const VehiclesPage = ({ onOpenModal }) => {
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {paginatedVehicles.map((v) => (
-            <div key={v.id} className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-shadow hover:shadow-soft-lg">
+            <div key={v.id} className="rounded-4xl border border-line bg-card p-6 shadow-soft transition-shadow hover:shadow-soft-lg">
               <div className="mb-4 flex items-start justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-base text-slate-500 shadow-soft-in-sm">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-base text-ink2 shadow-soft-in-sm">
                   <Bike className="h-6 w-6" />
                 </div>
                 <span className="rounded-full bg-base px-3 py-1 text-xs font-medium text-muted shadow-soft-in-sm">{v.year}</span>
@@ -98,15 +98,15 @@ const VehiclesPage = ({ onOpenModal }) => {
                 <p className="font-mono text-xs font-bold uppercase tracking-wider text-accent">{v.plate}</p>
               </div>
 
-              <div className="flex items-center justify-between border-t border-black/5 pt-3 text-xs">
+              <div className="flex items-center justify-between border-t border-hair pt-3 text-xs">
                 <div className="flex items-center gap-2 text-muted">
-                  <span className="h-4 w-4 rounded-full border border-black/10" style={{ backgroundColor: v.color?.toLowerCase() || '#cbd5e1' }} />
+                  <span className="h-4 w-4 rounded-full border border-hair" style={{ backgroundColor: v.color?.toLowerCase() || '#cbd5e1' }} />
                   <span className="capitalize">{v.color || 'N/A'}</span>
                 </div>
                 {isAdmin && (
                   <div className="flex max-w-[160px] items-center gap-1.5 rounded-full bg-base px-2.5 py-1 shadow-soft-in-sm">
                     <User className="h-3.5 w-3.5 text-muted" />
-                    <span className="truncate text-slate-600">{v.owner?.name || v.User?.name || 'Error'}</span>
+                    <span className="truncate text-ink2">{v.owner?.name || v.User?.name || 'Error'}</span>
                   </div>
                 )}
               </div>
@@ -121,7 +121,7 @@ const VehiclesPage = ({ onOpenModal }) => {
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-40"
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Prev
           </button>
@@ -138,7 +138,7 @@ const VehiclesPage = ({ onOpenModal }) => {
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
                 className={`min-w-[40px] rounded-full px-4 py-2 text-sm transition ${
-                  active ? 'bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]' : 'bg-panel text-slate-600 shadow-soft'
+                  active ? 'bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]' : 'bg-panel text-ink2 shadow-soft'
                 }`}
               >
                 {pageNum}
@@ -148,7 +148,7 @@ const VehiclesPage = ({ onOpenModal }) => {
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-40"
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Next
           </button>

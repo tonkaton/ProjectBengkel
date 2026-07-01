@@ -6,6 +6,7 @@ import { NAV_LINKS, APP_URL } from '../constants';
 import { cn } from '../utils';
 import { MobileMenu } from './navbar/MobileMenu';
 import { MobileMenuButton } from './navbar/MobileMenuButton';
+import { ThemeToggle } from './ui/ThemeToggle';
 
 /**
  * Rubber grip end-cap — bikin navbar kebaca seperti stang motor.
@@ -68,7 +69,7 @@ export default function Navbar() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className={cn(
-            'relative flex h-16 items-center gap-2 rounded-full border border-white/70 bg-panel/95 px-2 backdrop-blur transition-shadow duration-500',
+            'relative flex h-16 items-center gap-2 rounded-full border border-line bg-panel/95 px-2 backdrop-blur transition-shadow duration-500',
             scrolled ? 'shadow-soft-lg' : 'shadow-soft'
           )}
         >
@@ -94,14 +95,16 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="rounded-full px-3.5 py-2 text-sm font-medium text-slate-500 transition hover:bg-base hover:text-ink hover:shadow-soft-in-sm"
+                className="rounded-full px-3.5 py-2 text-sm font-medium text-ink2 transition hover:bg-base hover:text-ink hover:shadow-soft-in-sm"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* CTA — throttle */}
+          {/* Theme toggle + CTA */}
+          <ThemeToggle className="hidden md:flex" />
+
           <motion.a
             href={APP_URL}
             target="_blank"
@@ -117,7 +120,8 @@ export default function Navbar() {
           <Grip />
 
           {/* Mobile */}
-          <div className="ml-auto md:hidden">
+          <div className="ml-auto flex items-center gap-2 md:hidden">
+            <ThemeToggle />
             <MobileMenuButton isOpen={mobileMenu.isOpen} onClick={mobileMenu.toggle} />
           </div>
         </motion.div>

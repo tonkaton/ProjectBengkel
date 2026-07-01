@@ -65,7 +65,7 @@ const CustomerDashboard = ({ onNavigate }) => {
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-2">
         {/* MOTOR SAYA */}
-        <div className="flex min-h-[300px] flex-col rounded-4xl border border-white/70 bg-card p-5 shadow-soft md:min-h-[400px] md:p-6">
+        <div className="flex min-h-[300px] flex-col rounded-4xl border border-line bg-card p-5 shadow-soft md:min-h-[400px] md:p-6">
           <div className="mb-4 flex items-center justify-between md:mb-6">
             <h3 className="flex items-center gap-2 text-lg font-semibold text-ink md:text-xl">
               <Bike className="h-5 w-5 text-accent" />
@@ -78,7 +78,7 @@ const CustomerDashboard = ({ onNavigate }) => {
 
           <div className="flex-1 space-y-3">
             {myVehicles.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-black/10 p-8 text-muted">
+              <div className="flex h-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-hair p-8 text-muted">
                 <Bike className="mb-3 h-10 w-10 opacity-50" />
                 <p className="text-sm">Belum ada motor terdaftar</p>
               </div>
@@ -93,7 +93,7 @@ const CustomerDashboard = ({ onNavigate }) => {
                       {v.brand} {v.model}
                     </h4>
                     <p className="mt-1 flex items-center gap-2 font-mono text-xs text-muted">
-                      <span className="rounded bg-white px-1.5 py-0.5 text-slate-500 shadow-soft-sm">{v.year}</span>
+                      <span className="rounded bg-card px-1.5 py-0.5 text-ink2 shadow-soft-sm">{v.year}</span>
                       <span>•</span>
                       <span>{v.plate}</span>
                     </p>
@@ -105,13 +105,13 @@ const CustomerDashboard = ({ onNavigate }) => {
         </div>
 
         {/* RIWAYAT TRANSAKSI */}
-        <div className="flex min-h-[300px] flex-col overflow-hidden rounded-4xl border border-white/70 bg-card shadow-soft md:min-h-[400px]">
-          <div className="flex items-center justify-between border-b border-black/5 p-5 md:p-6">
+        <div className="flex min-h-[300px] flex-col overflow-hidden rounded-4xl border border-line bg-card shadow-soft md:min-h-[400px]">
+          <div className="flex items-center justify-between border-b border-hair p-5 md:p-6">
             <h3 className="text-lg font-semibold text-ink md:text-xl">Riwayat Transaksi</h3>
             <span className="text-xs font-medium text-muted">Terbaru</span>
           </div>
 
-          <div className="scrollbar-hide max-h-[400px] flex-1 divide-y divide-black/5 overflow-y-auto md:max-h-[500px]">
+          <div className="scrollbar-hide max-h-[400px] flex-1 divide-y divide-hair overflow-y-auto md:max-h-[500px]">
             {myTransactions.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center p-10 text-muted">
                 <p className="text-sm">Belum ada riwayat transaksi</p>

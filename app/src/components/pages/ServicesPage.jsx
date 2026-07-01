@@ -35,7 +35,7 @@ const ServicesPage = ({ onOpenModal }) => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredServices.map((s) => (
-          <div key={s.id} className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-shadow hover:shadow-soft-lg">
+          <div key={s.id} className="rounded-4xl border border-line bg-card p-6 shadow-soft transition-shadow hover:shadow-soft-lg">
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <h4 className="text-lg font-semibold text-ink">{s.name}</h4>
@@ -45,7 +45,7 @@ const ServicesPage = ({ onOpenModal }) => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => onOpenModal('editService', s)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-base text-slate-500 shadow-soft-sm transition active:shadow-soft-in-sm"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-base text-ink2 shadow-soft-sm transition active:shadow-soft-in-sm"
                   >
                     <Edit2 className="h-4 w-4" />
                   </button>
@@ -58,7 +58,7 @@ const ServicesPage = ({ onOpenModal }) => {
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-between border-t border-black/5 pt-4">
+            <div className="flex items-center justify-between border-t border-hair pt-4">
               <span className="font-mono text-xl font-semibold text-accent">{formatRupiah(s.price)}</span>
               <span className="rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-600">{s.points} Poin</span>
             </div>

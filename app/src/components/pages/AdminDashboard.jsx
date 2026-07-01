@@ -41,7 +41,7 @@ const AdminDashboard = () => {
           <span className="eyebrow">Executive overview</span>
           <h1 className="mt-1 font-display text-5xl tracking-wide text-ink">DASHBOARD</h1>
         </div>
-        <span className="rounded-full bg-card px-4 py-2 text-sm font-medium text-slate-500 shadow-soft-sm">
+        <span className="rounded-full bg-card px-4 py-2 text-sm font-medium text-ink2 shadow-soft-sm">
           {todayLabel}
         </span>
       </div>
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
       {/* Content Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Transactions */}
-        <div className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft">
+        <div className="rounded-4xl border border-line bg-card p-6 shadow-soft">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-ink">Transaksi Terbaru</h2>
             <span className="rounded-full bg-base px-3 py-1 text-xs font-medium text-muted shadow-soft-in-sm">
@@ -80,7 +80,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Upcoming Maintenance */}
-        <div className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft">
+        <div className="rounded-4xl border border-line bg-card p-6 shadow-soft">
           <h2 className="mb-6 text-lg font-semibold text-ink">Jadwal Servis Mendatang</h2>
           {maintenance.length === 0 ? (
             <p className="py-8 text-center text-muted">Tidak ada jadwal servis</p>

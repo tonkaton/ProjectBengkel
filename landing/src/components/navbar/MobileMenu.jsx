@@ -14,13 +14,13 @@ export function MobileMenu({ isOpen, links, onLinkClick }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="mt-2 rounded-4xl border border-white/70 bg-panel p-3 shadow-soft md:hidden"
+          className="mt-2 rounded-4xl border border-line bg-panel p-3 shadow-soft md:hidden"
         >
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-base hover:text-ink hover:shadow-soft-in-sm"
+              className="block rounded-2xl px-4 py-3 text-sm font-medium text-ink2 transition hover:bg-base hover:text-ink hover:shadow-soft-in-sm"
               onClick={onLinkClick}
             >
               {link.label}

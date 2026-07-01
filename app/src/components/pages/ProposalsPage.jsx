@@ -56,7 +56,7 @@ const ProposalsPage = () => {
       case 'Accepted': return 'text-emerald-600 bg-emerald-50';
       case 'Converted': return 'text-blue-600 bg-blue-50';
       case 'Rejected': return 'text-red-500 bg-red-50';
-      default: return 'text-slate-500 bg-slate-100';
+      default: return 'text-ink2 bg-slate-100';
     }
   };
 
@@ -102,7 +102,7 @@ const ProposalsPage = () => {
       {/* LIST */}
       <div className="space-y-3">
         {paginatedData.length === 0 ? (
-          <div className="rounded-4xl border-2 border-dashed border-black/10 p-10 text-center">
+          <div className="rounded-4xl border-2 border-dashed border-hair p-10 text-center">
             <FileText className="mx-auto mb-3 h-12 w-12 text-slate-300" />
             <p className="text-muted">Belum ada data proposal ditemukan.</p>
           </div>
@@ -111,7 +111,7 @@ const ProposalsPage = () => {
             <div
               key={item.id}
               onClick={() => handleViewDetail(item)}
-              className="flex cursor-pointer flex-col justify-between gap-4 rounded-3xl border border-white/70 bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
+              className="flex cursor-pointer flex-col justify-between gap-4 rounded-3xl border border-line bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
             >
               <div className="flex min-w-0 flex-1 items-center gap-4">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-soft-sm">
@@ -120,7 +120,7 @@ const ProposalsPage = () => {
                 <div className="min-w-0">
                   <h4 className="truncate text-base font-semibold text-ink">{item.title}</h4>
                   <div className="mt-1 flex items-center gap-2 text-sm text-muted">
-                    <span className="rounded-md bg-base px-2 py-0.5 text-xs text-slate-500 shadow-soft-in-sm">
+                    <span className="rounded-md bg-base px-2 py-0.5 text-xs text-ink2 shadow-soft-in-sm">
                       {item.vehicle ? `${item.vehicle.model} (${item.vehicle.plate})` : 'Tanpa Kendaraan'}
                     </span>
                     <span className="hidden sm:inline">•</span>
@@ -143,19 +143,19 @@ const ProposalsPage = () => {
       {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4">
-          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-40">Prev</button>
+          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40">Prev</button>
           {[...Array(totalPages)].map((_, i) => (
             <button
               key={i}
               onClick={() => goToPage(i + 1)}
               className={`min-w-[40px] rounded-full px-4 py-2 text-sm transition ${
-                currentPage === i + 1 ? 'bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]' : 'bg-panel text-slate-600 shadow-soft'
+                currentPage === i + 1 ? 'bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]' : 'bg-panel text-ink2 shadow-soft'
               }`}
             >
               {i + 1}
             </button>
           ))}
-          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-40">Next</button>
+          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40">Next</button>
         </div>
       )}
 
@@ -171,7 +171,7 @@ const ProposalsPage = () => {
             {/* Header */}
             <div className="rounded-2xl bg-base p-5 shadow-soft-in-sm">
               <h3 className="mb-1 text-xl font-semibold text-ink">{selectedProposal.title}</h3>
-              <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-3 text-sm text-muted">
+              <div className="mb-3 flex items-center justify-between border-b border-hair pb-3 text-sm text-muted">
                 <span>Ref: #{selectedProposal.id}</span>
                 <span>{formatDate(selectedProposal.createdAt)}</span>
               </div>
@@ -183,7 +183,7 @@ const ProposalsPage = () => {
                   </span>
                 </p>
                 {selectedProposal.admin_note && (
-                  <div className="mt-2 rounded-xl bg-white p-3 text-xs italic text-muted shadow-soft-in-sm">
+                  <div className="mt-2 rounded-xl bg-card p-3 text-xs italic text-muted shadow-soft-in-sm">
                     "{selectedProposal.admin_note}"
                   </div>
                 )}
@@ -193,7 +193,7 @@ const ProposalsPage = () => {
             {/* Rincian Biaya */}
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+                <h4 className="flex items-center gap-2 text-sm font-semibold text-ink2">
                   <FileText size={16} className="text-blue-500" /> Rincian Biaya
                 </h4>
                 {isLoadingDetail && (
@@ -203,10 +203,10 @@ const ProposalsPage = () => {
                 )}
               </div>
 
-              <div className="overflow-hidden rounded-2xl border border-white/70 bg-white shadow-soft-sm">
+              <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-soft-sm">
                 <div className="max-h-64 overflow-y-auto">
                   <table className="w-full text-sm">
-                    <thead className="sticky top-0 z-10 border-b border-black/5 bg-base text-muted">
+                    <thead className="sticky top-0 z-10 border-b border-hair bg-base text-muted">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Deskripsi</th>
                         <th className="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">Tipe</th>
@@ -215,7 +215,7 @@ const ProposalsPage = () => {
                         <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider">Subtotal</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-black/5">
+                    <tbody className="divide-y divide-hair">
                       {!selectedProposal.items && isLoadingDetail ? (
                         <tr><td colSpan={5} className="py-8 text-center text-muted">Mengambil data...</td></tr>
                       ) : !selectedProposal.items || selectedProposal.items.length === 0 ? (
@@ -223,7 +223,7 @@ const ProposalsPage = () => {
                       ) : (
                         selectedProposal.items.map((item, idx) => (
                           <tr key={idx}>
-                            <td className="px-4 py-3 text-slate-600">{item.description}</td>
+                            <td className="px-4 py-3 text-ink2">{item.description}</td>
                             <td className="px-3 py-3 text-center">
                               <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${item.type === 'Part' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
                                 {item.type}
@@ -239,7 +239,7 @@ const ProposalsPage = () => {
                   </table>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-black/5 bg-base p-4">
+                <div className="flex items-center justify-between border-t border-hair bg-base p-4">
                   <span className="text-sm font-medium text-muted">Total Estimasi:</span>
                   <span className="font-mono text-xl font-bold text-accent">{formatRupiah(selectedProposal.grand_total)}</span>
                 </div>

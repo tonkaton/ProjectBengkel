@@ -4,14 +4,14 @@ import { TrendingUp } from 'lucide-react';
 const chipMap = {
   'bg-red-600': 'bg-red-100 text-red-600',
   'bg-yellow-600': 'bg-amber-100 text-amber-600',
-  'bg-zinc-700': 'bg-slate-200 text-slate-600',
+  'bg-zinc-700': 'bg-slate-200 text-ink2',
 };
 
 const StatCard = ({ icon: Icon, label, value, color, trend }) => {
   const chip = chipMap[color] || 'bg-base text-accent';
 
   return (
-    <div className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-shadow duration-300 hover:shadow-soft-lg">
+    <div className="rounded-4xl border border-line bg-card p-6 shadow-soft transition-shadow duration-300 hover:shadow-soft-lg">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</p>

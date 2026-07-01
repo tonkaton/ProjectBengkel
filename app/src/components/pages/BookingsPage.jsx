@@ -60,7 +60,7 @@ const BookingsPage = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredBookings.length === 0 && (
-          <div className="col-span-full rounded-4xl border-2 border-dashed border-black/10 py-12 text-center text-muted">
+          <div className="col-span-full rounded-4xl border-2 border-dashed border-hair py-12 text-center text-muted">
             Tidak ada data booking.
           </div>
         )}
@@ -70,7 +70,7 @@ const BookingsPage = () => {
           return (
             <div
               key={booking.id}
-              className={`rounded-4xl border border-white/70 bg-card p-5 shadow-soft transition-all ${
+              className={`rounded-4xl border border-line bg-card p-5 shadow-soft transition-all ${
                 isPending ? 'cursor-pointer hover:shadow-soft-lg' : 'opacity-80'
               }`}
               onClick={isPending ? () => handleOpenProcess(booking) : undefined}
@@ -91,7 +91,7 @@ const BookingsPage = () => {
                 </span>
               </div>
 
-              <div className="mb-4 space-y-2.5 border-t border-black/5 pt-4 text-sm">
+              <div className="mb-4 space-y-2.5 border-t border-hair pt-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted">Motor:</span>
                   <span className="font-medium text-ink">{booking.motor_type}</span>
@@ -102,7 +102,7 @@ const BookingsPage = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Tgl:</span>
-                  <span className="font-mono text-slate-600">{booking.booking_date}</span>
+                  <span className="font-mono text-ink2">{booking.booking_date}</span>
                 </div>
                 {booking.complaint && (
                   <div className="mt-2 rounded-xl bg-base p-2.5 text-xs italic text-muted shadow-soft-in-sm">
@@ -138,7 +138,7 @@ const BookingsPage = () => {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-600">
+            <label className="mb-1.5 block text-sm font-medium text-ink2">
               Plat Nomor <span className="text-accent">*</span>
             </label>
             <Input
@@ -151,7 +151,7 @@ const BookingsPage = () => {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-600">Konfirmasi Layanan &amp; Harga</label>
+            <label className="mb-1.5 block text-sm font-medium text-ink2">Konfirmasi Layanan &amp; Harga</label>
             {matchedServiceName ? (
               <div className="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
                 <div className="flex items-center gap-2">
@@ -179,7 +179,7 @@ const BookingsPage = () => {
             )}
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-black/5 pt-4">
+          <div className="flex justify-end gap-3 border-t border-hair pt-4">
             <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
               Batal
             </Button>

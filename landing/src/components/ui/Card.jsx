@@ -15,9 +15,9 @@ export function Card({
   ...props
 }) {
   const variants = {
-    default: 'bg-card border-white/70 shadow-soft',
-    glass: 'bg-white/70 backdrop-blur-md border-white/70 shadow-soft',
-    solid: 'bg-card border-white/70 shadow-soft',
+    default: 'bg-card border-line shadow-soft',
+    glass: 'bg-card backdrop-blur-md border-line shadow-soft',
+    solid: 'bg-card border-line shadow-soft',
   };
 
   const baseClasses = cn(

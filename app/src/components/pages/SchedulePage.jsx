@@ -32,7 +32,7 @@ const SchedulePage = () => {
 
       {/* CONTENT */}
       {mySchedules.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-black/10 px-4 py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-hair px-4 py-16 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-base text-slate-400 shadow-soft-in">
             <Clock className="h-8 w-8" />
           </div>
@@ -51,9 +51,9 @@ const SchedulePage = () => {
             const alert = isUrgent || isOverdue;
 
             return (
-              <div key={m.id} className="flex h-full flex-col rounded-4xl border border-white/70 bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg">
+              <div key={m.id} className="flex h-full flex-col rounded-4xl border border-line bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg">
                 <div className="mb-4 flex items-start gap-3">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-soft-sm ${alert ? 'bg-red-100 text-red-500' : 'bg-base text-slate-500'}`}>
+                  <div className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-soft-sm ${alert ? 'bg-red-100 text-red-500' : 'bg-base text-ink2'}`}>
                     <Bike className="h-5 w-5" />
                   </div>
                   <h4 className="line-clamp-1 text-base font-semibold leading-tight text-ink md:text-lg">{vehicleName}</h4>
@@ -70,7 +70,7 @@ const SchedulePage = () => {
                 <div className="mb-4 flex-1 rounded-2xl bg-base p-3 shadow-soft-in-sm">
                   <div className="flex items-start gap-2">
                     <Wrench className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted" />
-                    <p className="line-clamp-2 text-sm text-slate-600">{m.note || 'Cek rutin berkala'}</p>
+                    <p className="line-clamp-2 text-sm text-ink2">{m.note || 'Cek rutin berkala'}</p>
                   </div>
                 </div>
 

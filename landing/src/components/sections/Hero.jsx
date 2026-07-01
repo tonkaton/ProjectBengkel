@@ -60,7 +60,7 @@ export default function Hero() {
             <motion.p
               {...rise}
               transition={{ duration: 0.6, delay: 0.12 }}
-              className="mt-6 max-w-md text-lg leading-relaxed text-slate-500"
+              className="mt-6 max-w-md text-lg leading-relaxed text-ink2"
             >
               {COMPANY.description}
             </motion.p>
@@ -104,7 +104,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="relative mx-auto w-full max-w-sm"
           >
-            <div className="rounded-4xl border border-white/70 bg-panel p-6 shadow-soft-lg">
+            <div className="rounded-4xl border border-line bg-panel p-6 shadow-soft-lg">
               <div className="flex items-center justify-between">
                 <span className="eyebrow">Status servis</span>
                 <span className="flex items-center gap-1.5 rounded-full bg-base px-3 py-1 text-xs font-semibold text-ok shadow-soft-in-sm">
@@ -114,7 +114,7 @@ export default function Hero() {
               </div>
 
               <p className="mt-4 font-mono text-2xl font-semibold tracking-tight text-ink">20260210-005</p>
-              <p className="text-sm text-slate-500">Honda Vario 160 · B 1234 XYZ</p>
+              <p className="text-sm text-ink2">Honda Vario 160 · B 1234 XYZ</p>
 
               <div className="mt-6 flex items-center gap-2">
                 <Step active label="Menunggu" />
@@ -134,7 +134,7 @@ export default function Hero() {
             </div>
 
             {/* kartu poin mengambang */}
-            <div className="absolute -bottom-6 -left-6 hidden items-center gap-3 rounded-3xl border border-white/70 bg-panel px-4 py-3 shadow-soft sm:flex">
+            <div className="absolute -bottom-6 -left-6 hidden items-center gap-3 rounded-3xl border border-line bg-panel px-4 py-3 shadow-soft sm:flex">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-base text-warn shadow-soft-in">
                 <Star size={18} />
               </span>

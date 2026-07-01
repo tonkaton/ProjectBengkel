@@ -101,7 +101,7 @@ const MaintenancePage = ({ onOpenModal }) => {
           <button
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-40"
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Prev
           </button>
@@ -112,7 +112,7 @@ const MaintenancePage = ({ onOpenModal }) => {
               className={`min-w-[40px] rounded-full px-4 py-2 text-sm transition ${
                 currentPage === i + 1
                   ? 'bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]'
-                  : 'bg-panel text-slate-600 shadow-soft'
+                  : 'bg-panel text-ink2 shadow-soft'
               }`}
             >
               {i + 1}
@@ -121,7 +121,7 @@ const MaintenancePage = ({ onOpenModal }) => {
           <button
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-40"
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Next
           </button>

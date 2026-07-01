@@ -28,7 +28,7 @@ const CustomersPage = ({ onOpenModal }) => {
       </div>
 
       {customers.length === 0 ? (
-        <div className="rounded-4xl border-2 border-dashed border-black/10 py-12 text-center text-muted">
+        <div className="rounded-4xl border-2 border-dashed border-hair py-12 text-center text-muted">
           Belum ada data pelanggan.
         </div>
       ) : (
@@ -37,7 +37,7 @@ const CustomersPage = ({ onOpenModal }) => {
             <div
               key={c.id}
               onClick={() => onOpenModal('editUser', c)}
-              className="group flex cursor-pointer items-center justify-between rounded-3xl border border-white/70 bg-card p-4 shadow-soft transition-all hover:shadow-soft-lg"
+              className="group flex cursor-pointer items-center justify-between rounded-3xl border border-line bg-card p-4 shadow-soft transition-all hover:shadow-soft-lg"
             >
               {/* KIRI */}
               <div className="flex items-center gap-4">

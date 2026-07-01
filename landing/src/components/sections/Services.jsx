@@ -13,7 +13,7 @@ function getIconMeta(name) {
   if (lower.includes('cuci')) return { Icon: Sparkles, cls: 'bg-cyan-100 text-cyan-600' };
   if (lower.includes('cvt')) return { Icon: Settings, cls: 'bg-orange-100 text-orange-600' };
   if (lower.includes('aki') || lower.includes('listrik')) return { Icon: Zap, cls: 'bg-yellow-100 text-yellow-600' };
-  return { Icon: Gauge, cls: 'bg-slate-200 text-slate-600' };
+  return { Icon: Gauge, cls: 'bg-slate-200 text-ink2' };
 }
 
 const formatRupiah = (num) =>
@@ -28,7 +28,7 @@ function ServiceCard({ service }) {
   const { Icon, cls } = getIconMeta(service.name);
 
   return (
-    <div className="group rounded-4xl border border-white/70 bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-soft-lg">
+    <div className="group rounded-4xl border border-line bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-soft-lg">
       <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${cls} shadow-soft-sm transition-transform duration-300 group-hover:-translate-y-0.5`}>
         <Icon className="h-7 w-7" />
       </div>
@@ -39,7 +39,7 @@ function ServiceCard({ service }) {
         {formatRupiah(service.price)}
       </p>
 
-      <div className="mt-5 flex items-center gap-2 border-t border-black/5 pt-4 text-xs font-medium text-muted">
+      <div className="mt-5 flex items-center gap-2 border-t border-hair pt-4 text-xs font-medium text-muted">
         <span className="h-2 w-2 rounded-full bg-ok" />
         Estimasi: {service.duration || '60 menit'}
       </div>
@@ -81,7 +81,7 @@ export default function Services() {
           <h2 className="mt-3 font-display text-5xl tracking-wide text-ink md:text-6xl">
             LAYANAN <span className="text-accent">BENGKEL</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-500">
+          <p className="mx-auto mt-4 max-w-2xl text-ink2">
             Daftar harga transparan dan estimasi waktu pengerjaan yang akurat langsung dari
             sistem kami.
           </p>
@@ -92,7 +92,7 @@ export default function Services() {
             <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-accent" />
           </div>
         ) : error ? (
-          <div className="mx-auto max-w-lg rounded-4xl border border-white/70 bg-card p-8 text-center shadow-soft">
+          <div className="mx-auto max-w-lg rounded-4xl border border-line bg-card p-8 text-center shadow-soft">
             <p className="mb-4 font-medium text-accent">Gagal memuat layanan dari server.</p>
             <p className="mb-6 rounded-xl bg-base p-2 font-mono text-sm text-muted shadow-soft-in-sm">{error}</p>
             <button
@@ -103,7 +103,7 @@ export default function Services() {
             </button>
           </div>
         ) : services.length === 0 ? (
-          <div className="mx-auto max-w-lg rounded-4xl border border-white/70 bg-card p-10 text-center shadow-soft">
+          <div className="mx-auto max-w-lg rounded-4xl border border-line bg-card p-10 text-center shadow-soft">
             <p className="text-muted">Belum ada layanan yang tersedia di database.</p>
           </div>
         ) : (

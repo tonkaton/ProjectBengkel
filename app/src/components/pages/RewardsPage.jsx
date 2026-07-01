@@ -64,7 +64,7 @@ const RewardsPage = ({ onOpenModal }) => {
 
       {/* GRID */}
       {filteredRewards.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-black/10 px-4 py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-4xl border-2 border-dashed border-hair px-4 py-16 text-center">
           <Gift className="mb-3 h-10 w-10 text-slate-300" />
           <p className="text-muted">Reward tidak ditemukan</p>
         </div>
@@ -77,7 +77,7 @@ const RewardsPage = ({ onOpenModal }) => {
             return (
               <div
                 key={r.id}
-                className={`flex flex-col justify-between rounded-4xl border border-white/70 bg-card p-5 shadow-soft transition-all ${
+                className={`flex flex-col justify-between rounded-4xl border border-line bg-card p-5 shadow-soft transition-all ${
                   isOutOfStock ? 'opacity-70' : 'hover:shadow-soft-lg'
                 }`}
               >
@@ -94,7 +94,7 @@ const RewardsPage = ({ onOpenModal }) => {
                   <p className="mb-4 font-mono text-xl font-bold text-accent">{r.points_needed} Poin</p>
                 </div>
 
-                <div className="mt-auto border-t border-black/5 pt-4">
+                <div className="mt-auto border-t border-hair pt-4">
                   {isAdmin ? (
                     <div className="flex gap-2">
                       <Button variant="secondary" size="sm" className="flex-1 text-xs" onClick={() => onOpenModal('editReward', r)}>

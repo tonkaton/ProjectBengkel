@@ -8,7 +8,7 @@ const variants = {
     'bg-panel text-ink shadow-soft hover:shadow-soft-lg active:shadow-soft-in disabled:opacity-60',
   danger: 'bg-red-500 text-white hover:bg-red-600 disabled:opacity-60',
   warning: 'bg-warn text-white hover:brightness-95 disabled:opacity-60',
-  ghost: 'text-slate-500 hover:bg-base hover:text-ink disabled:text-slate-300',
+  ghost: 'text-ink2 hover:bg-base hover:text-ink disabled:text-slate-300',
 };
 
 const sizes = {

@@ -62,13 +62,13 @@ const ProposalForm = ({ onClose }) => {
   };
 
   const fieldClass = 'w-full rounded-2xl bg-base px-4 py-3 text-sm text-ink shadow-soft-in outline-none placeholder:text-muted';
-  const labelClass = 'mb-1.5 block text-xs font-medium text-slate-600';
+  const labelClass = 'mb-1.5 block text-xs font-medium text-ink2';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* SECTION 1: HEADER INFO */}
       <div className="space-y-3 rounded-2xl bg-base p-4 shadow-soft-in-sm">
-        <div className="flex items-center gap-2 border-b border-black/5 pb-2">
+        <div className="flex items-center gap-2 border-b border-hair pb-2">
           <FileText className="text-blue-500" size={16} />
           <h3 className="text-sm font-semibold text-ink">Informasi Project</h3>
         </div>
@@ -125,7 +125,7 @@ const ProposalForm = ({ onClose }) => {
 
       {/* SECTION 2: ITEMS */}
       <div className="space-y-2">
-        <h3 className="flex items-center gap-1.5 px-1 text-sm font-semibold text-slate-600">
+        <h3 className="flex items-center gap-1.5 px-1 text-sm font-semibold text-ink2">
           <Package size={14} className="text-amber-500" />
           Rincian Item
         </h3>
@@ -195,7 +195,7 @@ const ProposalForm = ({ onClose }) => {
             <button
               type="button"
               onClick={addItem}
-              className="flex w-full items-center justify-center gap-1 rounded-2xl border border-dashed border-black/15 py-2 text-xs text-muted transition-all hover:border-accent/40 hover:text-accent"
+              className="flex w-full items-center justify-center gap-1 rounded-2xl border border-dashed border-hair py-2 text-xs text-muted transition-all hover:border-accent/40 hover:text-accent"
             >
               <Plus size={12} /> Tambah Item
             </button>
@@ -203,7 +203,7 @@ const ProposalForm = ({ onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-black/5 pt-3">
+        <div className="flex items-center justify-between border-t border-hair pt-3">
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted">Total:</span>
             <span className="font-mono text-lg font-bold text-accent">{formatRupiah(grandTotal)}</span>

@@ -113,7 +113,7 @@ const PointsHistoryPage = () => {
 
       <div className="space-y-4">
         {paginatedHistory.length === 0 ? (
-          <div className="rounded-4xl border-2 border-dashed border-black/10 py-16 text-center text-muted">
+          <div className="rounded-4xl border-2 border-dashed border-hair py-16 text-center text-muted">
             Belum ada riwayat.
           </div>
         ) : (
@@ -122,7 +122,7 @@ const PointsHistoryPage = () => {
             return (
               <div
                 key={t.id}
-                className="flex flex-col justify-between rounded-3xl border border-white/70 bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
+                className="flex flex-col justify-between rounded-3xl border border-line bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
               >
                 <div className="flex items-center gap-5">
                   <div
@@ -137,12 +137,12 @@ const PointsHistoryPage = () => {
                     <p className="text-sm font-medium text-muted">{t.note || (isPlus ? 'Bonus Servis Berkala' : 'Penukaran Reward')}</p>
                     <div className="mt-2 flex items-center gap-3 text-xs text-muted">
                       <span className="rounded-md bg-base px-2 py-1 shadow-soft-in-sm">{formatDateTime(t.createdAt)}</span>
-                      {isAdmin && <span className="font-semibold text-slate-500">• {t.customer?.name || 'User'}</span>}
+                      {isAdmin && <span className="font-semibold text-ink2">• {t.customer?.name || 'User'}</span>}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 border-t border-black/5 pt-4 text-right sm:mt-0 sm:border-none sm:pt-0">
+                <div className="mt-4 border-t border-hair pt-4 text-right sm:mt-0 sm:border-none sm:pt-0">
                   <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted">Nominal</p>
                   <span className={`font-mono text-2xl font-bold tracking-tight ${isPlus ? 'text-emerald-600' : 'text-red-500'}`}>
                     {isPlus ? '+' : ''}{t.points_earned} XP
@@ -157,9 +157,9 @@ const PointsHistoryPage = () => {
       {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-6">
-          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-30">Prev</button>
+          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-30">Prev</button>
           <span className="px-2 text-sm text-muted">Page {currentPage} / {totalPages}</span>
-          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-slate-600 shadow-soft transition disabled:opacity-30">Next</button>
+          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-30">Next</button>
         </div>
       )}
     </div>

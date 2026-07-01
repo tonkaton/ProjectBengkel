@@ -3,17 +3,73 @@
 @tailwind utilities;
 
 :root {
-  --shadow-out: -6px -6px 14px rgba(255, 255, 255, 0.8), 6px 6px 16px rgba(163, 177, 198, 0.45);
-  --shadow-in: inset -4px -4px 10px rgba(255, 255, 255, 0.7), inset 4px 4px 10px rgba(163, 177, 198, 0.45);
+  --c-base: #e6eaef;
+  --c-panel: #edf1f6;
+  --c-card: #f4f6fa;
+  --c-ink: #2d3748;
+  --c-ink2: #52607a;
+  --c-muted: #8a94a6;
+  --c-line: rgba(255, 255, 255, 0.7);
+  --c-hair: rgba(0, 0, 0, 0.06);
+  --c-accent: #e0463b;
+  --c-accent-dark: #c23a30;
+  --c-ok: #3ba776;
+  --c-warn: #e0a23b;
+  --c-footer: #232a33;
+  --c-tint-warm: #f1ebe4;
+  --c-tint-blue: #e4eaf2;
+  --c-tint-mint: #e5f0ea;
+  --c-tint-lav: #eceaf5;
+  --c-tint-cream: #f2ede4;
+
+  --sh-soft-sm: -3px -3px 8px rgba(255, 255, 255, 0.75), 3px 3px 8px rgba(163, 177, 198, 0.4);
+  --sh-soft: -6px -6px 14px rgba(255, 255, 255, 0.8), 6px 6px 16px rgba(163, 177, 198, 0.45);
+  --sh-soft-lg: -10px -10px 24px rgba(255, 255, 255, 0.85), 10px 10px 28px rgba(163, 177, 198, 0.5);
+  --sh-soft-in: inset -4px -4px 10px rgba(255, 255, 255, 0.7), inset 4px 4px 10px rgba(163, 177, 198, 0.45);
+  --sh-soft-in-sm: inset -2px -2px 5px rgba(255, 255, 255, 0.65), inset 2px 2px 5px rgba(163, 177, 198, 0.4);
+
+  --page-grad:
+    radial-gradient(1100px 540px at 78% -8%, #f0f3f8 0%, rgba(240, 243, 248, 0) 60%),
+    radial-gradient(900px 500px at 0% 100%, #eef1f6 0%, rgba(238, 241, 246, 0) 55%),
+    linear-gradient(180deg, #e9edf2 0%, #e2e6ed 100%);
+}
+
+.dark {
+  --c-base: #1b1e24;
+  --c-panel: #232830;
+  --c-card: #262c35;
+  --c-ink: #e7eaf0;
+  --c-ink2: #aab2c0;
+  --c-muted: #7e8798;
+  --c-line: rgba(255, 255, 255, 0.06);
+  --c-hair: rgba(255, 255, 255, 0.08);
+  --c-accent: #f05545;
+  --c-accent-dark: #d6412f;
+  --c-ok: #48b98b;
+  --c-warn: #e6ac4c;
+  --c-footer: #14171c;
+  --c-tint-warm: #24201c;
+  --c-tint-blue: #1b1f27;
+  --c-tint-mint: #1a2320;
+  --c-tint-lav: #211e29;
+  --c-tint-cream: #242019;
+
+  --sh-soft-sm: -3px -3px 7px rgba(255, 255, 255, 0.04), 3px 3px 8px rgba(0, 0, 0, 0.5);
+  --sh-soft: -5px -5px 12px rgba(255, 255, 255, 0.035), 6px 6px 16px rgba(0, 0, 0, 0.55);
+  --sh-soft-lg: -8px -8px 20px rgba(255, 255, 255, 0.04), 10px 10px 26px rgba(0, 0, 0, 0.6);
+  --sh-soft-in: inset -3px -3px 8px rgba(255, 255, 255, 0.03), inset 4px 4px 10px rgba(0, 0, 0, 0.5);
+  --sh-soft-in-sm: inset -2px -2px 5px rgba(255, 255, 255, 0.03), inset 2px 2px 6px rgba(0, 0, 0, 0.45);
+
+  --page-grad:
+    radial-gradient(1100px 540px at 78% -8%, #262c37 0%, rgba(0, 0, 0, 0) 60%),
+    radial-gradient(900px 500px at 0% 100%, #1f242c 0%, rgba(0, 0, 0, 0) 55%),
+    linear-gradient(180deg, #1c2027 0%, #15181e 100%);
 }
 
 body {
   @apply bg-base text-ink;
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  background-image:
-    radial-gradient(1100px 540px at 78% -8%, #f0f3f8 0%, rgba(240, 243, 248, 0) 60%),
-    radial-gradient(900px 500px at 0% 100%, #eef1f6 0%, rgba(238, 241, 246, 0) 55%),
-    linear-gradient(180deg, #e9edf2 0%, #e2e6ed 100%);
+  background-image: var(--page-grad);
   background-attachment: fixed;
   min-height: 100vh;
 }
@@ -22,7 +78,6 @@ html {
   scroll-behavior: smooth;
 }
 
-/* small uppercase label */
 .eyebrow {
   @apply text-xs font-semibold uppercase tracking-[0.2em] text-muted;
 }

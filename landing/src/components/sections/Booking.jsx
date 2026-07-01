@@ -80,19 +80,19 @@ export default function Booking() {
           <h2 className="mt-3 font-display text-5xl tracking-wide text-ink md:text-6xl">
             BOOKING <span className="text-accent">SERVIS</span>
           </h2>
-          <p className="mt-4 text-slate-500">
+          <p className="mt-4 text-ink2">
             Pilih jadwal kedatangan Anda. Admin akan memproses antrian.
           </p>
         </div>
 
-        <div className="rounded-4xl border border-white/70 bg-card p-6 shadow-soft-lg sm:p-8">
+        <div className="rounded-4xl border border-line bg-card p-6 shadow-soft-lg sm:p-8">
           {bookingResult ? (
             <div className="py-6 text-center">
               <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-base text-ok shadow-soft">
                 <Check className="h-8 w-8" strokeWidth={2.5} />
               </div>
               <h3 className="text-2xl font-semibold text-ink">Booking berhasil!</h3>
-              <p className="mt-1 text-slate-500">Data Anda telah kami terima.</p>
+              <p className="mt-1 text-ink2">Data Anda telah kami terima.</p>
 
               <div className="mx-auto mb-8 mt-6 max-w-sm rounded-3xl bg-base p-6 shadow-soft-in">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted">
@@ -101,7 +101,7 @@ export default function Booking() {
                 <div className="font-mono text-4xl font-bold tracking-wider text-accent">
                   {bookingResult.booking_queue || `#${bookingResult.id}`}
                 </div>
-                <div className="mt-4 flex justify-between border-t border-black/5 pt-4 text-xs text-muted">
+                <div className="mt-4 flex justify-between border-t border-hair pt-4 text-xs text-muted">
                   <span>Tanggal: {bookingResult.booking_date}</span>
                   <span>Jam: {form.time}</span>
                 </div>
