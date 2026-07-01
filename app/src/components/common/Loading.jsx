@@ -1,9 +1,10 @@
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 
 const Loading = () => {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center text-yellow-500 font-bold">
-      Loading...
+    <div className="flex min-h-screen items-center justify-center text-accent">
+      <Loader2 className="h-8 w-8 animate-spin" />
     </div>
   );
 };

@@ -15,11 +15,10 @@ const PointsHistoryPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Filter Data
   const filteredHistory = useMemo(() => {
     return transactions
       .filter((t) => {
-        if (t.points_earned === 0) return false;        
+        if (t.points_earned === 0) return false;
         if (!isAdmin && t.UserId !== currentUser?.id) return false;
         if (t.status !== 'Selesai') return false;
         const keyword = searchTerm.toLowerCase();
@@ -32,14 +31,11 @@ const PointsHistoryPage = () => {
           : true;
         return matchSearch && matchDate;
       })
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); 
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [transactions, searchTerm, filterDate, isAdmin, currentUser]);
 
   const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
-  const paginatedHistory = filteredHistory.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedHistory = filteredHistory.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleExportExcel = () => {
     const dataExport = filteredHistory.map((t) => ({
@@ -49,7 +45,6 @@ const PointsHistoryPage = () => {
       Keterangan: t.note || (t.points_earned > 0 ? "Bonus Servis" : "Tukar Reward"),
       Poin: t.points_earned,
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(dataExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Mutasi Poin");
@@ -57,37 +52,58 @@ const PointsHistoryPage = () => {
     saveAs(new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "mutasi-poin.xlsx");
   };
 
-  const handlePrint = () => { window.print(); };
+  const handlePrint = () => window.print();
+
+  const inputClass =
+    "rounded-2xl bg-base px-4 py-3 text-sm text-ink shadow-soft-in outline-none placeholder:text-muted";
 
   return (
     <div className="space-y-6">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800 pb-6">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-                <div className="p-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl shadow-lg shadow-orange-900/20">
-                    <Wallet className="w-7 h-7 text-white" />
-                </div>
-                Riwayat Poin dan Service
-            </h2>
-            <p className="text-zinc-400 mt-1 ml-1">Laporan mutasi poin masuk dan keluar</p>
+          <span className="eyebrow">Loyalti</span>
+          <h1 className="mt-1 flex items-center gap-3 font-display text-4xl tracking-wide text-ink">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 shadow-soft-sm">
+              <Wallet className="h-6 w-6" />
+            </span>
+            MUTASI POIN
+          </h1>
+          <p className="mt-1 text-sm text-muted">Laporan mutasi poin masuk dan keluar</p>
         </div>
         {!isAdmin && (
-             <div className="bg-zinc-900 px-6 py-4 rounded-xl border border-zinc-800">
-                 <p className="text-zinc-500 text-xs uppercase tracking-widest font-semibold mb-1">Saldo Anda</p>
-                 <p className="text-yellow-400 font-mono font-bold text-3xl">{currentUser?.points || 0} XP</p>
-             </div>
+          <div className="rounded-2xl bg-card px-6 py-4 shadow-soft">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted">Saldo Anda</p>
+            <p className="font-mono text-3xl font-bold text-accent">{currentUser?.points || 0} XP</p>
+          </div>
         )}
       </div>
 
       {/* FILTER */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex gap-3 w-full md:w-auto">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="flex w-full gap-3 md:w-auto">
           <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-            <input type="text" placeholder="Cari user / aktivitas..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} className="w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-900 text-white border border-zinc-800 focus:border-yellow-600 outline-none" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={18} />
+            <input
+              type="text"
+              placeholder="Cari user / aktivitas..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className={`w-full pl-11 ${inputClass}`}
+            />
           </div>
-          <input type="date" value={filterDate} onChange={(e) => { setFilterDate(e.target.value); setCurrentPage(1); }} className="px-4 py-3 rounded-xl bg-zinc-900 text-white border border-zinc-800 focus:border-yellow-600 outline-none" />
+          <input
+            type="date"
+            value={filterDate}
+            onChange={(e) => {
+              setFilterDate(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={inputClass}
+          />
         </div>
         <div className="flex gap-2">
           <Button onClick={handleExportExcel} icon={FileDown} variant="secondary">Excel</Button>
@@ -97,61 +113,53 @@ const PointsHistoryPage = () => {
 
       <div className="space-y-4">
         {paginatedHistory.length === 0 ? (
-            <div className="text-center py-16 bg-zinc-900/30 border-2 border-dashed border-zinc-800 rounded-2xl">
-                <p className="text-zinc-500 text-lg">Belum ada riwayat.</p>
-            </div>
+          <div className="rounded-4xl border-2 border-dashed border-hair py-16 text-center text-muted">
+            Belum ada riwayat.
+          </div>
         ) : (
-            paginatedHistory.map((t) => {
-                const isPlus = t.points_earned > 0;
-                return (
-                    <div key={t.id} className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-zinc-900/80 rounded-xl border border-zinc-800 hover:border-zinc-600 transition-all hover:shadow-lg hover:shadow-zinc-900/50">
-                        
-                        <div className="flex items-center gap-5">
-                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ${
-                                isPlus 
-                                ? 'bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 border border-emerald-500/30 text-emerald-400' 
-                                : 'bg-gradient-to-br from-red-900/50 to-red-800/30 border border-red-500/30 text-red-400'
-                            }`}>
-                                {isPlus ? <ArrowDownLeft className="w-7 h-7" /> : <ArrowUpRight className="w-7 h-7" />}
-                            </div>
-
-                            <div>
-                                <h4 className="text-white font-bold text-lg mb-1">
-                                    {isPlus ? 'Poin Masuk' : 'Poin Keluar'}
-                                </h4>
-                                <p className="text-zinc-400 text-sm font-medium">
-                                    {t.note || (isPlus ? 'Bonus Servis Berkala' : 'Penukaran Reward')}
-                                </p>
-                                <div className="flex items-center gap-3 mt-2 text-xs text-zinc-500">
-                                    <span className="flex items-center gap-1 bg-zinc-950 px-2 py-1 rounded-md border border-zinc-800">
-                                        {formatDateTime(t.createdAt)}
-                                    </span>
-                                    {isAdmin && <span className="text-yellow-600/80 font-semibold">• {t.customer?.name || 'User'}</span>}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Kanan: Nominal Besar */}
-                        <div className="mt-4 sm:mt-0 text-right pl-4 border-l border-zinc-800/50 sm:border-none">
-                            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Nominal</p>
-                            <span className={`font-mono font-bold text-2xl tracking-tight ${
-                                isPlus ? 'text-emerald-400' : 'text-red-400'
-                            }`}>
-                                {isPlus ? '+' : ''}{t.points_earned} XP
-                            </span>
-                        </div>
+          paginatedHistory.map((t) => {
+            const isPlus = t.points_earned > 0;
+            return (
+              <div
+                key={t.id}
+                className="flex flex-col justify-between rounded-3xl border border-line bg-card p-5 shadow-soft transition-all hover:shadow-soft-lg sm:flex-row sm:items-center"
+              >
+                <div className="flex items-center gap-5">
+                  <div
+                    className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl shadow-soft-sm ${
+                      isPlus ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-500'
+                    }`}
+                  >
+                    {isPlus ? <ArrowDownLeft className="h-7 w-7" /> : <ArrowUpRight className="h-7 w-7" />}
+                  </div>
+                  <div>
+                    <h4 className="mb-1 text-lg font-semibold text-ink">{isPlus ? 'Poin Masuk' : 'Poin Keluar'}</h4>
+                    <p className="text-sm font-medium text-muted">{t.note || (isPlus ? 'Bonus Servis Berkala' : 'Penukaran Reward')}</p>
+                    <div className="mt-2 flex items-center gap-3 text-xs text-muted">
+                      <span className="rounded-md bg-base px-2 py-1 shadow-soft-in-sm">{formatDateTime(t.createdAt)}</span>
+                      {isAdmin && <span className="font-semibold text-ink2">• {t.customer?.name || 'User'}</span>}
                     </div>
-                );
-            })
+                  </div>
+                </div>
+
+                <div className="mt-4 border-t border-hair pt-4 text-right sm:mt-0 sm:border-none sm:pt-0">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted">Nominal</p>
+                  <span className={`font-mono text-2xl font-bold tracking-tight ${isPlus ? 'text-emerald-600' : 'text-red-500'}`}>
+                    {isPlus ? '+' : ''}{t.points_earned} XP
+                  </span>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 pt-6">
-          <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1} className="px-4 py-2 bg-zinc-900 text-white rounded-lg border border-zinc-800 hover:bg-zinc-800 disabled:opacity-30">Prev</button>
-          <span className="text-zinc-500 px-2">Page {currentPage} / {totalPages}</span>
-          <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="px-4 py-2 bg-zinc-900 text-white rounded-lg border border-zinc-800 hover:bg-zinc-800 disabled:opacity-30">Next</button>
+        <div className="flex items-center justify-center gap-2 pt-6">
+          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-30">Prev</button>
+          <span className="px-2 text-sm text-muted">Page {currentPage} / {totalPages}</span>
+          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-30">Next</button>
         </div>
       )}
     </div>

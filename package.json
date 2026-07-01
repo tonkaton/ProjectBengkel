@@ -1,15 +1,19 @@
 {
   "name": "projectbengkel-root",
   "version": "1.0.0",
-  "description": "Pengendali Frontend (App + Landing)",
+  "description": "Pengendali dev: Backend + App + Landing",
   "main": "index.js",
   "scripts": {
+    "dev": "concurrently -n \"BE,APP,LANDING\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold\" \"npm:be\" \"npm:app\" \"npm:landing\"",
     "dev:fe": "concurrently -n \"APP,LANDING\" -c \"bgBlue.bold,bgGreen.bold\" \"npm:app\" \"npm:landing\"",
-    
+
+    "be": "cd backend && npm run dev",
     "app": "cd app && npm run dev",
     "landing": "cd landing && npm run dev",
-    
-    "dev:be": "cd backend && npm start"
+
+    "dev:be": "cd backend && npm start",
+
+    "setup": "npm install && cd backend && npm install && cd ../app && npm install && cd ../landing && npm install"
   },
   "keywords": [],
   "author": "",

@@ -11,15 +11,13 @@ const TextArea = ({
 }) => {
   return (
     <div className={className}>
-      {label && (
-        <label className="block text-sm text-gray-300 mb-1">{label}</label>
-      )}
+      {label && <label className="mb-1.5 block text-sm font-medium text-ink2">{label}</label>}
       <textarea
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         rows={rows}
-        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded text-white outline-none focus:border-yellow-500 transition-colors resize-none"
+        className="w-full resize-none rounded-2xl bg-base px-4 py-3 text-ink shadow-soft-in outline-none placeholder:text-muted"
         {...props}
       />
     </div>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Menu, X, LogOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X, LogOut, Wrench, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { getMenuItems } from '../../constants/menuItems';
 
@@ -13,98 +13,106 @@ const Sidebar = ({
   const { userRole, logout } = useAuth();
   const menuItems = getMenuItems(userRole);
 
+  const [dark, setDark] = useState(
+    () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  );
+
+  const toggleTheme = () => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle('dark', next);
+    try {
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+    } catch (e) {
+      /* ignore */
+    }
+  };
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSidebarOpen(false); // Otomatis tutup menu kalo di mobile pas klik item
+    setSidebarOpen(false);
     if (onSearchClear) onSearchClear();
   };
 
+  const labelHide = `truncate ${!sidebarOpen ? 'md:hidden' : 'block'}`;
+
   return (
-    // HAPUS SPACER <div className="md:hidden..." /> DARI SINI
-    // Langsung return div utamanya aja
     <div
       className={`
-        bg-zinc-900 border-zinc-800 transition-all duration-300 flex flex-col z-50
-        
-        /* --- MOBILE STYLES (Default) --- */
-        fixed top-0 left-0 w-full border-b
-        ${sidebarOpen ? 'h-screen' : 'h-20'} /* Kalo mobile open, height full screen. Kalo closed, cuma header doang */
-
-        /* --- DESKTOP STYLES (md:...) --- */
+        z-50 flex flex-col bg-panel transition-all duration-300
+        fixed left-0 top-0 w-full border-b border-line
+        ${sidebarOpen ? 'h-screen' : 'h-20'}
         md:sticky md:top-0 md:h-screen md:border-b-0 md:border-r
-        ${sidebarOpen ? 'md:w-64' : 'md:w-20'} /* Reset height control di desktop via flex/sticky */
+        ${sidebarOpen ? 'md:w-64' : 'md:w-20'}
       `}
     >
-      {/* Header Section */}
-      <div className="shrink-0 p-5 border-b border-zinc-800/50 md:border-zinc-800 flex items-center justify-between h-20">
-        
-        {/* Logo Logic */}
-        <div className={`${!sidebarOpen ? 'block md:hidden' : 'block'} min-w-0 transition-opacity duration-200`}>
-           <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent truncate">
-            Botak Engine Speed
-          </h1>
-          <p className="text-xs md:text-sm text-zinc-400 mt-0.5 truncate">
-            {userRole === 'admin' ? 'Admin Panel' : 'Customer Portal'}
-          </p>
+      {/* Header */}
+      <div className="flex h-20 shrink-0 items-center justify-between border-b border-line p-5">
+        <div className={`${!sidebarOpen ? 'block md:hidden' : 'block'} flex min-w-0 items-center gap-2.5`}>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-base text-accent shadow-soft-in">
+            <Wrench size={18} strokeWidth={2.4} />
+          </span>
+          <div className="min-w-0">
+            <h1 className="truncate font-display text-xl tracking-wide text-ink">
+              Botak<span className="text-accent">.</span> Engine
+            </h1>
+            <p className="truncate text-[11px] font-medium text-muted">
+              {userRole === 'admin' ? 'Admin Panel' : 'Customer Portal'}
+            </p>
+          </div>
         </div>
-        
-        {/* Toggle Button */}
+
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 hover:bg-zinc-800 rounded-lg transition-colors flex-shrink-0 text-zinc-400 hover:text-white"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-base text-ink2 shadow-soft-in transition active:shadow-soft-in-sm"
           aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
         >
-          {sidebarOpen ? <X className="w-6 h-6 md:w-5 md:h-5" /> : <Menu className="w-6 h-6 md:w-5 md:h-5" />}
+          {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Navigation & Logout Wrapper */}
-      <div className={`
-        flex-1 flex flex-col overflow-hidden
-        ${sidebarOpen ? 'flex' : 'hidden md:flex'} /* Mobile: Hidden kalo closed. Desktop: Always flex */
-      `}>
-        
-        {/* Menu Items */}
-        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
-          {menuItems.map((item) => (
-            <button
-              key={item.tab}
-              onClick={() => handleTabChange(item.tab)}
-              className={`w-full flex items-center gap-3 py-3 rounded-lg transition-all duration-200 font-medium
-                ${
-                  sidebarOpen 
-                    ? 'px-4 justify-start' 
-                    : 'md:justify-center md:px-2 px-4 justify-start' 
-                }
-                ${
-                  activeTab === item.tab
-                    ? 'bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow-sm'
-                    : 'text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100'
-                }`}
-            >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              <span className={`truncate ${!sidebarOpen ? 'md:hidden' : 'block'}`}>
-                {item.label}
-              </span>
-            </button>
-          ))}
+      {/* Nav + Footer */}
+      <div className={`flex flex-1 flex-col overflow-hidden ${sidebarOpen ? 'flex' : 'hidden md:flex'}`}>
+        <nav className="scrollbar-hide flex-1 space-y-1.5 overflow-y-auto p-4">
+          {menuItems.map((item) => {
+            const active = activeTab === item.tab;
+            return (
+              <button
+                key={item.tab}
+                onClick={() => handleTabChange(item.tab)}
+                className={`flex w-full items-center gap-3 rounded-2xl py-3 font-medium transition-all duration-200
+                  ${sidebarOpen ? 'justify-start px-4' : 'justify-start px-4 md:justify-center md:px-2'}
+                  ${active ? 'bg-card text-accent shadow-soft' : 'text-ink2 hover:bg-base hover:text-ink'}`}
+              >
+                <item.icon className="h-5 w-5 flex-shrink-0" />
+                <span className={labelHide}>{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
-        {/* Logout Button */}
-        <div className="shrink-0 p-4 border-t border-zinc-800 bg-zinc-900 md:bg-transparent">
+        <div className="shrink-0 space-y-1.5 border-t border-line p-4">
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 font-medium text-ink2 transition-all duration-200 hover:bg-base hover:text-ink
+              ${sidebarOpen ? 'justify-start' : 'justify-start md:justify-center'}`}
+            aria-label={dark ? 'Mode terang' : 'Mode gelap'}
+          >
+            {dark ? <Sun className="h-5 w-5 flex-shrink-0" /> : <Moon className="h-5 w-5 flex-shrink-0" />}
+            <span className={labelHide}>{dark ? 'Mode Terang' : 'Mode Gelap'}</span>
+          </button>
+
+          {/* Logout */}
           <button
             onClick={logout}
-            className={`w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-950/30 hover:text-red-300 rounded-lg transition-all duration-200 font-medium
-              ${sidebarOpen ? 'justify-start' : 'md:justify-center justify-start'}
-            `}
+            className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 font-medium text-accent transition-all duration-200 hover:bg-red-50
+              ${sidebarOpen ? 'justify-start' : 'justify-start md:justify-center'}`}
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            <span className={`truncate ${!sidebarOpen ? 'md:hidden' : 'block'}`}>
-              Logout
-            </span>
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            <span className={labelHide}>Logout</span>
           </button>
         </div>
-        
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Calendar, Plus, Search } from 'lucide-react';
 import { useAuth, useData } from '../../contexts';
 import { MaintenanceCard } from '../common';
 import { Button } from '../ui';
-import { API_URL } from '../../constants'; // [UPDATE] Import API_URL buat fetch manual
+import { API_URL } from '../../constants';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -13,31 +13,22 @@ const MaintenancePage = ({ onOpenModal }) => {
 
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
   const handleDelete = async (id) => {
     try {
-      const token = sessionStorage.getItem('token'); // Ambil token dari session
-      
+      const token = sessionStorage.getItem('token');
       const response = await fetch(`${API_URL}/maintenance/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });
-
-      if (!response.ok) {
-        throw new Error('Gagal menghapus data dari server');
-      }
-      
-      // Reload simpel biar data ke-refresh otomatis
-      window.location.reload(); 
+      if (!response.ok) throw new Error('Gagal menghapus data dari server');
+      window.location.reload();
     } catch (error) {
       console.error('Gagal menghapus:', error);
       alert('Gagal menghapus jadwal. Pastikan server berjalan dan token valid.');
     }
   };
 
-  // 🔍 FILTER DATA
   const filteredMaintenance = useMemo(() => {
     return maintenance.filter((m) =>
       `${m.customer?.name || ''} ${m.owner?.name || ''} ${m.vehicle || ''} ${m.note || ''}`
@@ -46,9 +37,7 @@ const MaintenancePage = ({ onOpenModal }) => {
     );
   }, [maintenance, search]);
 
-  // 📄 PAGINATION LOGIC
   const totalPages = Math.ceil(filteredMaintenance.length / ITEMS_PER_PAGE);
-
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredMaintenance.slice(start, start + ITEMS_PER_PAGE);
@@ -61,18 +50,21 @@ const MaintenancePage = ({ onOpenModal }) => {
 
   return (
     <div className="space-y-6">
-
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h2 className="text-3xl font-bold text-white flex items-center">
-          <Calendar className="w-6 h-6 mr-2 text-yellow-400" />
-          Semua Jadwal Maintenance
-        </h2>
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div>
+          <span className="eyebrow">Perawatan</span>
+          <h1 className="mt-1 flex items-center gap-3 font-display text-4xl tracking-wide text-ink">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 shadow-soft-sm">
+              <Calendar className="h-6 w-6" />
+            </span>
+            JADWAL SERVIS
+          </h1>
+        </div>
 
         <div className="flex items-center gap-3">
-          {/* SEARCH */}
           <div className="relative">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
               type="text"
               placeholder="Cari customer / kendaraan..."
@@ -81,16 +73,11 @@ const MaintenancePage = ({ onOpenModal }) => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="bg-zinc-800 text-white pl-9 pr-4 py-2 rounded-lg border border-zinc-700 focus:outline-none focus:border-yellow-500 w-64"
+              className="w-64 rounded-full bg-base py-3 pl-11 pr-4 text-sm text-ink shadow-soft-in outline-none placeholder:text-muted"
             />
           </div>
-
           {isAdmin && (
-            <Button
-              onClick={() => onOpenModal('addMaintenance')}
-              icon={Plus}
-              size="lg"
-            >
+            <Button onClick={() => onOpenModal('addMaintenance')} icon={Plus}>
               Tambah Jadwal
             </Button>
           )}
@@ -99,50 +86,42 @@ const MaintenancePage = ({ onOpenModal }) => {
 
       {/* LIST */}
       {paginatedData.length === 0 ? (
-        <p className="text-gray-400 text-center py-10">
-          Tidak ada jadwal maintenance ditemukan
-        </p>
+        <p className="py-10 text-center text-muted">Tidak ada jadwal maintenance ditemukan</p>
       ) : (
         <div className="space-y-4">
           {paginatedData.map((m) => (
-            <MaintenanceCard 
-                key={m.id} 
-                item={m} 
-                onDelete={handleDelete}
-            />
+            <MaintenanceCard key={m.id} item={m} onDelete={handleDelete} />
           ))}
         </div>
       )}
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 pt-4">
+        <div className="flex items-center justify-center gap-2 pt-4">
           <button
             onClick={() => goToPage(currentPage - 1)}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
             disabled={currentPage === 1}
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Prev
           </button>
-
           {[...Array(totalPages)].map((_, i) => (
             <button
               key={i}
               onClick={() => goToPage(i + 1)}
-              className={`px-3 py-1 rounded-lg border ${
+              className={`min-w-[40px] rounded-full px-4 py-2 text-sm transition ${
                 currentPage === i + 1
-                  ? 'bg-yellow-500 text-black border-yellow-500 font-bold'
-                  : 'bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700'
+                  ? 'bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]'
+                  : 'bg-panel text-ink2 shadow-soft'
               }`}
             >
               {i + 1}
             </button>
           ))}
-
           <button
             onClick={() => goToPage(currentPage + 1)}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
             disabled={currentPage === totalPages}
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Next
           </button>

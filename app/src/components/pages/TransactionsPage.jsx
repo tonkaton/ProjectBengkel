@@ -15,39 +15,33 @@ const TransactionsPage = ({ onOpenModal }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // 🔍 SEARCH + FILTER
   const filteredTransactions = useMemo(() => {
     return transactions.filter((t) => {
       const keyword = searchTerm.toLowerCase();
-
       const matchSearch =
         String(t.UserId).toLowerCase().includes(keyword) ||
         t.note?.toLowerCase().includes(keyword) ||
-        t.status?.toLowerCase().includes(keyword) || 
+        t.status?.toLowerCase().includes(keyword) ||
         String(t.amount).includes(keyword) ||
-        String(t.queue_number).toLowerCase().includes(keyword) || // 👈 Tambah search by Queue
+        String(t.queue_number).toLowerCase().includes(keyword) ||
         String(t.id).includes(keyword);
-
       const matchDate = filterDate
         ? new Date(t.createdAt).toISOString().split("T")[0] === filterDate
         : true;
-
       return matchSearch && matchDate;
     });
   }, [transactions, searchTerm, filterDate]);
 
-  // 📄 PAGINATION
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
   const paginatedTransactions = filteredTransactions.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // 📥 EXPORT EXCEL (UPDATE)
   const handleExportExcel = () => {
     const dataExport = filteredTransactions.map((t) => ({
       ID: t.id,
-      Antrian: t.queue_number || "-", // 👈 Tambah Kolom Antrian
+      Antrian: t.queue_number || "-",
       Name: t.UserId,
       Tanggal: new Date(t.createdAt).toLocaleString(),
       Catatan: t.note || "-",
@@ -55,16 +49,10 @@ const TransactionsPage = ({ onOpenModal }) => {
       Nominal: t.amount,
       Poin: t.points_earned,
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(dataExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Transaksi");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     saveAs(
       new Blob([excelBuffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -73,7 +61,6 @@ const TransactionsPage = ({ onOpenModal }) => {
     );
   };
 
-  // 🖨 PRINT (UPDATE)
   const handlePrint = () => {
     const rows = filteredTransactions
       .map(
@@ -89,7 +76,6 @@ const TransactionsPage = ({ onOpenModal }) => {
         </tr>`
       )
       .join("");
-
     const printContent = `
       <html>
         <head>
@@ -118,41 +104,45 @@ const TransactionsPage = ({ onOpenModal }) => {
         </body>
       </html>
     `;
-
     const win = window.open("", "", "width=900,height=700");
     win.document.write(printContent);
     win.document.close();
     win.print();
   };
 
+  const inputClass =
+    "rounded-2xl bg-base px-4 py-2.5 text-sm text-ink shadow-soft-in outline-none placeholder:text-muted";
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h2 className="text-3xl font-bold text-white">Kelola Transaksi</h2>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <span className="eyebrow">Keuangan</span>
+          <h1 className="mt-1 font-display text-4xl tracking-wide text-ink">KELOLA TRANSAKSI</h1>
+        </div>
         {isAdmin && (
-          <Button onClick={() => onOpenModal("addTransaction")} icon={Plus} size="lg">
+          <Button onClick={() => onOpenModal("addTransaction")} icon={Plus}>
             Tambah Transaksi
           </Button>
         )}
       </div>
 
       {/* SEARCH & FILTER */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex gap-3 w-full md:w-auto">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="flex w-full gap-3 md:w-auto">
           <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
               type="text"
-              placeholder="Cari ID, User, Antrian..." // 👈 Update placeholder
+              placeholder="Cari ID, User, Antrian..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+              className={`w-full pl-11 ${inputClass}`}
             />
           </div>
-
           <input
             type="date"
             value={filterDate}
@@ -160,39 +150,39 @@ const TransactionsPage = ({ onOpenModal }) => {
               setFilterDate(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+            className={inputClass}
           />
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={handleExportExcel} icon={FileDown}>Export</Button>
-          <Button onClick={handlePrint} icon={Printer}>Print</Button>
+          <Button onClick={handleExportExcel} icon={FileDown} variant="secondary">Export</Button>
+          <Button onClick={handlePrint} icon={Printer} variant="secondary">Print</Button>
         </div>
       </div>
 
       {/* DATA */}
       {paginatedTransactions.length === 0 ? (
-        <p className="text-gray-400 text-center py-10">Tidak ada transaksi ditemukan</p>
+        <p className="py-10 text-center text-muted">Tidak ada transaksi ditemukan</p>
       ) : (
-        <div className="space-y-4"> {/* 👈 Wrapper biar rapi */}
-            {paginatedTransactions.map((t) => (
+        <div className="space-y-4">
+          {paginatedTransactions.map((t) => (
             <TransactionRow
-                key={t.id} 
-                transaction={{ ...t, status: t.status || "Menunggu" }}
-                onToggleStatus={toggleTransactionStatus}
-                onDelete={deleteTransaction}
+              key={t.id}
+              transaction={{ ...t, status: t.status || "Menunggu" }}
+              onToggleStatus={toggleTransactionStatus}
+              onDelete={deleteTransaction}
             />
-            ))}
+          ))}
         </div>
       )}
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 pt-4">
+        <div className="flex items-center justify-center gap-2 pt-4">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Prev
           </button>
@@ -200,10 +190,10 @@ const TransactionsPage = ({ onOpenModal }) => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded-lg border ${
+              className={`min-w-[40px] rounded-full px-4 py-2 text-sm transition ${
                 currentPage === i + 1
-                  ? "bg-yellow-500 text-black border-yellow-500 font-bold"
-                  : "bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
+                  ? "bg-accent font-bold text-white shadow-[0_6px_14px_rgba(224,70,59,0.30)]"
+                  : "bg-panel text-ink2 shadow-soft"
               }`}
             >
               {i + 1}
@@ -212,7 +202,7 @@ const TransactionsPage = ({ onOpenModal }) => {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-zinc-800 text-white rounded-lg border border-zinc-700 hover:bg-zinc-700 disabled:opacity-40"
+            className="rounded-full bg-panel px-4 py-2 text-sm font-medium text-ink2 shadow-soft transition disabled:opacity-40"
           >
             Next
           </button>

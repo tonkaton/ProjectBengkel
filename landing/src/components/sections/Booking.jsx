@@ -1,37 +1,35 @@
 import { useState, useEffect } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
 import { Container } from '../layout';
-import { Card, Button } from '../ui';
 
-// Variable API_URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const inputClass =
+  'w-full rounded-2xl bg-base px-4 py-3 text-ink shadow-soft-in placeholder:text-muted focus:outline-none';
 
 export default function Booking() {
   const [form, setForm] = useState({
     name: '',
     phone: '',
     vehicle: '',
-    service: '', 
+    service: '',
     date: '',
-    time: '', // 👈 TETAP PERTAHANKAN INI
-    complaint: ''
+    time: '',
+    complaint: '',
   });
 
   const [bookingResult, setBookingResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [servicesList, setServicesList] = useState([]); 
+  const [servicesList, setServicesList] = useState([]);
 
-  // 1. FETCH LAYANAN
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch(`${API_URL}/services`); 
+        const res = await fetch(`${API_URL}/services`);
         const data = await res.json();
-        
-        if (res.ok && data.data) {
-          setServicesList(data.data);
-        }
+        if (res.ok && data.data) setServicesList(data.data);
       } catch (err) {
-        console.error("Gagal ambil layanan:", err);
+        console.error('Gagal ambil layanan:', err);
       }
     };
     fetchServices();
@@ -42,7 +40,6 @@ export default function Booking() {
   };
 
   const handleBooking = async () => {
-    // Validasi Tetap Wajib Ada Jam
     if (!form.name || !form.phone || !form.vehicle || !form.date || !form.time || !form.service) {
       alert('Mohon lengkapi data booking (Nama, HP, Motor, Layanan, Tgl, Jam)');
       return;
@@ -53,11 +50,10 @@ export default function Booking() {
       const payload = {
         name: form.name,
         phone: form.phone,
-        motor_type: form.vehicle,   
-        service_type: form.service, 
-        booking_date: form.date,    
-        // 👇 Masukkan jam ke note/complaint agar admin terbantu
-        complaint: `[JAM KEDATANGAN: ${form.time}] - ${form.complaint || '-'}` 
+        motor_type: form.vehicle,
+        service_type: form.service,
+        booking_date: form.date,
+        complaint: `[JAM KEDATANGAN: ${form.time}] - ${form.complaint || '-'}`,
       };
 
       const res = await fetch(`${API_URL}/bookings`, {
@@ -67,11 +63,8 @@ export default function Booking() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.message || 'Gagal booking');
-
-      setBookingResult(data.data); 
-
+      setBookingResult(data.data);
     } catch (err) {
       console.error(err);
       alert('Gagal mengirim booking: ' + err.message);
@@ -80,71 +73,65 @@ export default function Booking() {
   };
 
   return (
-    <section id="booking" className="bg-black py-16 px-4 text-white">
+    <section id="booking" className="bg-tintMint px-4 py-24">
       <Container size="sm">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-3">Booking Servis Online</h2>
-          <p className="text-gray-400">
+        <div className="mb-10 text-center">
+          <span className="eyebrow">Booking online</span>
+          <h2 className="mt-3 font-display text-5xl tracking-wide text-ink md:text-6xl">
+            BOOKING <span className="text-accent">SERVIS</span>
+          </h2>
+          <p className="mt-4 text-ink2">
             Pilih jadwal kedatangan Anda. Admin akan memproses antrian.
           </p>
         </div>
 
-        <Card variant="solid" className="p-6 sm:p-8 shadow-2xl border border-zinc-800 bg-zinc-900">
+        <div className="rounded-4xl border border-line bg-card p-6 shadow-soft-lg sm:p-8">
           {bookingResult ? (
-            // TAMPILAN SUKSES
-            <div className="text-center py-6">
-              <div className="inline-block p-4 rounded-full bg-green-500/20 text-green-400 mb-4">
-                <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="py-6 text-center">
+              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-base text-ok shadow-soft">
+                <Check className="h-8 w-8" strokeWidth={2.5} />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Booking Berhasil!</h3>
-              <p className="text-gray-300 mb-6">
-                Data Anda telah kami terima.
-              </p>
-              
-              <div className="bg-zinc-800 rounded-lg p-6 max-w-sm mx-auto mb-8 border border-zinc-700 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
-                
-                {/* 👇 GANTI LABEL BIAR GAK MISLEADING */}
-                <p className="text-xs text-zinc-500 uppercase tracking-widest mb-2 font-semibold">Kode Booking / ID Antrian</p>
-                
-                <div className="text-4xl font-mono font-bold text-yellow-400 tracking-wider">
+              <h3 className="text-2xl font-semibold text-ink">Booking berhasil!</h3>
+              <p className="mt-1 text-ink2">Data Anda telah kami terima.</p>
+
+              <div className="mx-auto mb-8 mt-6 max-w-sm rounded-3xl bg-base p-6 shadow-soft-in">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted">
+                  Kode booking / ID antrian
+                </p>
+                <div className="font-mono text-4xl font-bold tracking-wider text-accent">
                   {bookingResult.booking_queue || `#${bookingResult.id}`}
                 </div>
-                
-                <div className="mt-4 pt-4 border-t border-zinc-700 flex justify-between text-xs text-zinc-400">
-                    <span>Tanggal: {bookingResult.booking_date}</span>
-                    {/* Kalau bisa ambil balik jamnya dari state form atau result */}
-                    <span>Jam: {form.time}</span> 
+                <div className="mt-4 flex justify-between border-t border-hair pt-4 text-xs text-muted">
+                  <span>Tanggal: {bookingResult.booking_date}</span>
+                  <span>Jam: {form.time}</span>
                 </div>
               </div>
 
-              <Button 
-                onClick={() => { setBookingResult(null); setForm({...form, name: '', phone: ''}); }}
-                variant="outline"
-                className="mx-auto"
+              <button
+                onClick={() => {
+                  setBookingResult(null);
+                  setForm({ ...form, name: '', phone: '' });
+                }}
+                className="rounded-full bg-panel px-7 py-3 font-semibold text-ink shadow-soft transition hover:shadow-soft-lg active:shadow-soft-in"
               >
-                Buat Booking Baru
-              </Button>
+                Buat booking baru
+              </button>
             </div>
           ) : (
-            // FORM BOOKING
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <input name="name" placeholder="Nama Lengkap" value={form.name} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
-                <input name="phone" placeholder="No HP / WhatsApp" value={form.phone} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
-                <input name="vehicle" placeholder="Motor (Contoh: Vario 160)" value={form.vehicle} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
-                
-                {/* DROPDOWN DINAMIS */}
+              <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <input name="name" placeholder="Nama lengkap" value={form.name} onChange={handleChange} className={inputClass} />
+                <input name="phone" placeholder="No HP / WhatsApp" value={form.phone} onChange={handleChange} className={inputClass} />
+                <input name="vehicle" placeholder="Motor (contoh: Vario 160)" value={form.vehicle} onChange={handleChange} className={inputClass} />
+
                 <div className="relative">
-                  <select 
-                    name="service" 
-                    value={form.service} 
-                    onChange={handleChange} 
-                    className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 text-white appearance-none focus:outline-none focus:border-yellow-500"
+                  <select
+                    name="service"
+                    value={form.service}
+                    onChange={handleChange}
+                    className={`${inputClass} appearance-none pr-10`}
                   >
-                    <option value="">-- Pilih Layanan --</option>
+                    <option value="">-- Pilih layanan --</option>
                     {servicesList.length > 0 ? (
                       servicesList.map((svc) => (
                         <option key={svc.id} value={svc.name}>
@@ -152,36 +139,34 @@ export default function Booking() {
                         </option>
                       ))
                     ) : (
-                       <option>Loading...</option>
+                      <option>Loading...</option>
                     )}
                   </select>
-                  <div className="absolute right-3 top-3.5 pointer-events-none text-gray-400">▼</div>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-3.5 h-5 w-5 text-muted" />
                 </div>
 
-                <input type="date" name="date" value={form.date} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
-                
-                {/* 👇 JAM TETAP ADA */}
-                <input type="time" name="time" value={form.time} onChange={handleChange} className="p-3 rounded bg-zinc-800 border border-zinc-700 text-white focus:outline-none focus:border-yellow-500" />
+                <input type="date" name="date" value={form.date} onChange={handleChange} className={inputClass} />
+                <input type="time" name="time" value={form.time} onChange={handleChange} className={inputClass} />
               </div>
 
-              <textarea 
-                name="complaint" 
-                placeholder="Ada keluhan tambahan? (Opsional)" 
-                value={form.complaint} 
-                onChange={handleChange} 
-                className="w-full p-3 rounded bg-zinc-800 border border-zinc-700 text-white mb-6 focus:outline-none focus:border-yellow-500 h-24 resize-none"
+              <textarea
+                name="complaint"
+                placeholder="Ada keluhan tambahan? (opsional)"
+                value={form.complaint}
+                onChange={handleChange}
+                className={`${inputClass} mb-6 h-24 resize-none`}
               />
 
-              <Button
+              <button
                 onClick={handleBooking}
-                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02]"
                 disabled={loading}
+                className="w-full rounded-full bg-accent py-3.5 font-semibold text-white shadow-[0_10px_24px_rgba(224,70,59,0.35)] transition hover:bg-accentDark active:scale-[0.99] disabled:opacity-60"
               >
-                {loading ? 'Sedang Memproses...' : 'Kirim Booking'}
-              </Button>
+                {loading ? 'Sedang memproses...' : 'Kirim booking'}
+              </button>
             </>
           )}
-        </Card>
+        </div>
       </Container>
     </section>
   );

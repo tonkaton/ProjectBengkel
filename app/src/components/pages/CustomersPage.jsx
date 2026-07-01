@@ -7,9 +7,8 @@ const CustomersPage = ({ onOpenModal }) => {
   const { customers, deleteCustomer } = useData();
 
   const handleDelete = async (e, id) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     if (!window.confirm('Yakin hapus pelanggan ini?')) return;
-    
     const result = await deleteCustomer(id);
     if (result.success) alert('Pelanggan berhasil dihapus!');
     else alert('Gagal: ' + result.message);
@@ -17,68 +16,63 @@ const CustomersPage = ({ onOpenModal }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-           <h2 className="text-3xl font-bold text-white">Daftar Pelanggan</h2>
-           <p className="text-zinc-400 mt-1">Kelola data user dan pantau loyalty points mereka.</p>
+          <span className="eyebrow">Master data</span>
+          <h1 className="mt-1 font-display text-4xl tracking-wide text-ink">DAFTAR PELANGGAN</h1>
+          <p className="mt-1 text-sm text-muted">Kelola data user dan pantau loyalty points mereka.</p>
         </div>
-        <Button
-          onClick={() => onOpenModal('addUser')}
-          icon={Plus}
-          size="lg"
-        >
+        <Button onClick={() => onOpenModal('addUser')} icon={Plus}>
           Tambah Pelanggan
         </Button>
       </div>
 
       {customers.length === 0 ? (
-        <div className="text-center py-12 text-zinc-500 bg-zinc-800/50 border border-dashed border-zinc-700 rounded-xl">
+        <div className="rounded-4xl border-2 border-dashed border-hair py-12 text-center text-muted">
           Belum ada data pelanggan.
         </div>
       ) : (
-        <div className="space-y-3"> 
+        <div className="space-y-3">
           {customers.map((c) => (
             <div
               key={c.id}
               onClick={() => onOpenModal('editUser', c)}
-              className="group flex items-center justify-between p-4 bg-zinc-800 rounded-xl border border-zinc-700 hover:border-yellow-500 hover:bg-zinc-800/80 transition-all cursor-pointer"
+              className="group flex cursor-pointer items-center justify-between rounded-3xl border border-line bg-card p-4 shadow-soft transition-all hover:shadow-soft-lg"
             >
-              {/* KIRI: INFO USER */}
+              {/* KIRI */}
               <div className="flex items-center gap-4">
-                 <div className="p-3 bg-zinc-900 rounded-lg text-yellow-500">
-                    <User className="w-5 h-5" />
-                 </div>
-                 
-                 <div>
-                    <h4 className="text-white font-bold text-lg leading-tight">{c.name}</h4>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-zinc-400 mt-1">
-                        <span className="flex items-center gap-1">
-                            <Mail className="w-3.5 h-3.5" /> {c.email}
-                        </span>
-                        <span className="flex items-center gap-1 text-yellow-500 font-semibold bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">
-                            <Coins className="w-3.5 h-3.5" /> {c.points || 0} Loyalty Points
-                        </span>
-                    </div>
-                 </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-base text-accent shadow-soft-in-sm">
+                  <User className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold leading-tight text-ink">{c.name}</h4>
+                  <div className="mt-1 flex flex-col gap-1 text-sm text-muted sm:flex-row sm:items-center sm:gap-4">
+                    <span className="flex items-center gap-1">
+                      <Mail className="h-3.5 w-3.5" /> {c.email}
+                    </span>
+                    <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 font-semibold text-amber-600">
+                      <Coins className="h-3.5 w-3.5" /> {c.points || 0} Poin
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              {/* KANAN: ROLE & DELETE */}
+              {/* KANAN */}
               <div className="flex items-center gap-4">
-                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                    c.role === 'admin' 
-                      ? 'bg-red-900/20 text-red-400 border-red-900/30' 
-                      : 'bg-blue-900/20 text-blue-400 border-blue-900/30'
-                 }`}>
-                    {c.role}
-                 </span>
-
-                 <button
-                    onClick={(e) => handleDelete(e, c.id)}
-                    className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                    title="Hapus Pelanggan"
-                 >
-                    <Trash2 className="w-5 h-5" />
-                 </button>
+                <span
+                  className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                    c.role === 'admin' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-500'
+                  }`}
+                >
+                  {c.role}
+                </span>
+                <button
+                  onClick={(e) => handleDelete(e, c.id)}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100"
+                  title="Hapus Pelanggan"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
               </div>
             </div>
           ))}

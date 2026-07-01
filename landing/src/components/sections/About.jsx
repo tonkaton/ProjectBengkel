@@ -1,65 +1,78 @@
-import { motion } from "framer-motion";
-import { Button } from "../ui";
-import { Container } from "../layout";
-import { COMPANY, ANIMATION } from "../../constants";
-import botakengineImage from "../../../assets/botakenginespeed.png";
+import { motion } from 'framer-motion';
+import { ArrowUpRight, Wrench, ShieldCheck, BadgeCheck } from 'lucide-react';
+import { Container } from '../layout';
+import { COMPANY } from '../../constants';
+import botakengineImage from '../../../assets/botakenginespeed.png';
+
+const features = [
+  { icon: Wrench, label: 'Mekanik ahli', cls: 'text-accent' },
+  { icon: ShieldCheck, label: 'Sparepart ori', cls: 'text-ok' },
+  { icon: BadgeCheck, label: 'Garansi servis', cls: 'text-warn' },
+];
 
 /**
- * About section component
+ * About section — slate gelap
  */
 export default function About() {
   return (
-    <section
-      id="about"
-      className="bg-gradient-to-b from-black to-gray-900 text-white py-24 px-6 md:px-12"
-    >
-      <Container className="grid md:grid-cols-2 gap-12 items-center">
-        {/* Workshop Image */}
-        <motion.img
-          src={botakengineImage}
-          alt="botakenginespeed"
-          className="rounded-2xl shadow-2xl border border-gray-700 hover:border-yellow-400 hover:scale-105 transition-transform duration-500"
-          initial={ANIMATION.fadeInLeft.initial}
-          whileInView={ANIMATION.fadeInLeft.whileInView}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        />
-
-        {/* About Text */}
+    <section id="about" className="bg-footerInk px-6 py-24 md:px-12">
+      <Container className="grid items-center gap-12 md:grid-cols-2">
         <motion.div
-          initial={ANIMATION.fadeInRight.initial}
-          whileInView={ANIMATION.fadeInRight.whileInView}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, x: -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="rounded-4xl border border-white/10 bg-card p-3 shadow-2xl shadow-black/40"
+        >
+          <img
+            src={botakengineImage}
+            alt="Botak Engine Speed"
+            className="w-full rounded-3xl object-cover"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-yellow-400">
-            Tentang Kami <span className="text-red-500"></span>
+          <span className="eyebrow">Tentang kami</span>
+          <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
+            BUKAN SEKADAR <span className="text-accent">BENGKEL</span>
           </h2>
 
-          <p className="text-gray-300 leading-relaxed mb-5">
-            <span className="text-yellow-400 font-semibold">
-              {COMPANY.name}
-            </span>
+          <p className="mt-5 font-semibold text-white">{COMPANY.name}</p>
+          <p className="mt-3 leading-relaxed text-slate-300">
+            hadir untuk memberikan pelayanan terbaik bagi semua jenis motor. Kami
+            menggunakan peralatan modern dan tenaga ahli berpengalaman untuk memastikan
+            performa motor Anda selalu optimal di setiap perjalanan.
           </p>
-          <p className="text-gray-300 leading-relaxed mb-5">
-            hadir untuk memberikan pelayanan terbaik bagi semua jenis motor.
-            Kami menggunakan peralatan modern dan tenaga ahli berpengalaman
-            untuk memastikan performa motor Anda selalu optimal di setiap
-            perjalanan
-          </p>
-
-          <p className="text-gray-300 leading-relaxed mb-8">
-            Dengan fokus pada{" "}
-            <span className="text-red-500 font-semibold">kualitas</span> dan{" "}
-            <span className="text-yellow-400 font-semibold">
-              kepuasan pelanggan
-            </span>
-            , kami percaya setiap motor layak mendapatkan perhatian terbaik.
+          <p className="mt-4 leading-relaxed text-slate-300">
+            Dengan fokus pada <span className="font-semibold text-accent">kualitas</span> dan{' '}
+            <span className="font-semibold text-white">kepuasan pelanggan</span>, setiap motor
+            layak mendapatkan perhatian terbaik.
           </p>
 
-          <Button href="#services" variant="danger" animate>
-            Jelajahi Layanan Kami
-          </Button>
+          <div className="mt-7 flex flex-wrap gap-3">
+            {features.map(({ icon: Icon, label, cls }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white"
+              >
+                <Icon size={16} className={cls} />
+                {label}
+              </span>
+            ))}
+          </div>
+
+          <a
+            href="#services"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 font-semibold text-white shadow-[0_10px_24px_rgba(224,70,59,0.35)] transition hover:bg-accentDark active:scale-[0.98]"
+          >
+            Jelajahi layanan
+            <ArrowUpRight size={18} />
+          </a>
         </motion.div>
       </Container>
     </section>
