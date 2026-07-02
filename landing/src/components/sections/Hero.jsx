@@ -30,9 +30,10 @@ function Step({ active, label }) {
 export default function Hero() {
   return (
     <section id="hero" className="relative flex min-h-screen items-center overflow-hidden pb-20 pt-28">
-      {/* ambient lembut */}
-      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/40 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-white/30 blur-3xl" />
+      {/* ambient lembut — putih di light mode; di dark mode diganti bloom accent
+          yang jauh lebih halus supaya tidak jadi neon putih yang menyilaukan */}
+      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/40 blur-3xl dark:bg-accent/10" />
+      <div className="pointer-events-none absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-white/30 blur-3xl dark:bg-accent/[0.06]" />
 
       <Container size="lg" className="relative">
         <div className="grid items-center gap-14 md:grid-cols-2">
