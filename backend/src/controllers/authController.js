@@ -4,6 +4,7 @@ const User = require('../models/User');
 const LoyaltyPoint = require('../models/LoyaltyPoint');
 const Vehicle = require('../models/Vehicle');
 const Transaction = require('../models/Transaction');
+const blocklist = require('../utils/tokenBlocklist');
 
 exports.register = async (req, res) => {
   try {
@@ -13,10 +14,17 @@ exports.register = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hash });
     await LoyaltyPoint.create({ UserId: user.id, points: 0 });
-    
+
     res.json({ message: 'Register ok' });
   } catch (e) {
-    res.status(400).json({ message: e.message });
+    if (e.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({ message: 'Email sudah terdaftar' });
+    }
+    if (e.name === 'SequelizeValidationError') {
+      return res.status(400).json({ message: 'Data tidak valid' });
+    }
+    console.error('Register error:', e);
+    res.status(500).json({ message: 'Gagal mendaftar' });
   }
 };
 
@@ -29,10 +37,25 @@ exports.login = async (req, res) => {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: 'Password salah' });
     
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET);
-    res.json({ token, user });
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const { password: _pw, ...safeUser } = user.toJSON();
+    res.json({ token, user: safeUser });
   } catch (e) {
+    console.error('Login error:', e);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    // Revoke the token server-side so the session ends on every origin that
+    // shares this backend (dashboard app + landing), not just the caller.
+    const expiryMs = req.user?.exp ? req.user.exp * 1000 : undefined; // JWT exp is in seconds
+    blocklist.add(req.token, expiryMs);
+    res.json({ message: 'Logout berhasil' });
+  } catch (e) {
+    console.error('Logout error:', e);
+    res.status(500).json({ message: 'Gagal logout' });
   }
 };
 
@@ -58,7 +81,8 @@ exports.getMe = async (req, res) => {
 
     res.json({ user: userData });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('getMe error:', error);
+    res.status(500).json({ message: 'Gagal mengambil data user' });
   }
 };
 
@@ -140,8 +164,10 @@ exports.updateUser = async (req, res) => {
     }
 
     await user.save();
-    res.json({ message: 'User berhasil diupdate', data: user });
+    const { password: _pw, ...safeUser } = user.toJSON();
+    res.json({ message: 'User berhasil diupdate', data: safeUser });
   } catch (e) {
+    console.error('Update user error:', e);
     res.status(500).json({ message: 'Gagal update user' });
   }
 };

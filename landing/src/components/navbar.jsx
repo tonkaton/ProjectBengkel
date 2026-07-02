@@ -1,12 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Wrench, Zap } from 'lucide-react';
-import { useScroll, useMobileMenu } from '../hooks';
+import { Wrench, Zap, LayoutDashboard, LogOut } from 'lucide-react';
+import { useScroll, useMobileMenu, useAuth } from '../hooks';
 import { NAV_LINKS, APP_URL } from '../constants';
 import { cn } from '../utils';
 import { MobileMenu } from './navbar/MobileMenu';
 import { MobileMenuButton } from './navbar/MobileMenuButton';
 import { ThemeToggle } from './ui/ThemeToggle';
+import { Login } from './forms';
 
 /**
  * Rubber grip end-cap — bikin navbar kebaca seperti stang motor.
@@ -56,9 +57,23 @@ function BrakeLever({ side = 'left' }) {
 export default function Navbar() {
   const scrolled = useScroll(40);
   const mobileMenu = useMobileMenu();
+  const { user, token, isLoggedIn, loading, login, logout } = useAuth();
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const displayName = user?.name || user?.email || 'Pengguna';
+  const initial = displayName.charAt(0).toUpperCase();
+
+  // SSO handoff: carry the session to the dashboard app (separate origin) via a
+  // URL hash fragment so the user doesn't have to log in again there.
+  const dashboardUrl = token ? `${APP_URL}#token=${encodeURIComponent(token)}` : APP_URL;
 
   const handleLinkClick = useCallback(() => {
     mobileMenu.close();
+  }, [mobileMenu]);
+
+  const handleLoginClick = useCallback(() => {
+    mobileMenu.close();
+    setLoginOpen(true);
   }, [mobileMenu]);
 
   return (
@@ -102,20 +117,60 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Theme toggle + CTA */}
+          {/* Theme toggle + CTA / Session */}
           <ThemeToggle className="hidden md:flex" />
 
-          <motion.a
-            href={APP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className="hidden h-11 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(224,70,59,0.35)] transition-colors hover:bg-accentDark md:inline-flex"
-          >
-            <Zap size={16} strokeWidth={2.6} />
-            Login
-          </motion.a>
+          {isLoggedIn ? (
+            <div className="hidden items-center gap-2 md:flex">
+              {/* Session pill → go to dashboard (auto-login via SSO handoff) */}
+              <motion.a
+                href={dashboardUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                title={`Login sebagai ${displayName} — buka Dashboard`}
+                className="flex h-11 items-center gap-2 rounded-full border border-line bg-base pl-1.5 pr-4 shadow-soft-in-sm transition hover:shadow-soft"
+              >
+                <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">
+                  {initial}
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-base bg-emerald-500" />
+                </span>
+                <span className="flex flex-col leading-none">
+                  <span className="max-w-[120px] truncate text-sm font-semibold text-ink">{displayName}</span>
+                  <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                    <LayoutDashboard size={11} strokeWidth={2.6} />
+                    Dashboard
+                  </span>
+                </span>
+              </motion.a>
+
+              {/* Logout */}
+              <button
+                type="button"
+                onClick={logout}
+                title="Keluar dari sesi"
+                aria-label="Keluar"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-base text-accent shadow-soft-in-sm transition hover:shadow-soft"
+              >
+                <LogOut size={18} strokeWidth={2.4} />
+              </button>
+            </div>
+          ) : (
+            <motion.button
+              type="button"
+              onClick={handleLoginClick}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className={cn(
+                'hidden h-11 items-center gap-1.5 rounded-full bg-accent px-5 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(224,70,59,0.35)] transition-colors hover:bg-accentDark md:inline-flex',
+                loading && 'pointer-events-none opacity-60'
+              )}
+            >
+              <Zap size={16} strokeWidth={2.6} />
+              Login
+            </motion.button>
+          )}
 
           <Grip />
 
@@ -130,8 +185,20 @@ export default function Navbar() {
           isOpen={mobileMenu.isOpen}
           links={NAV_LINKS}
           onLinkClick={handleLinkClick}
+          isLoggedIn={isLoggedIn}
+          displayName={displayName}
+          initial={initial}
+          dashboardUrl={dashboardUrl}
+          onLogout={logout}
+          onLoginClick={handleLoginClick}
         />
       </div>
+
+      <Login
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onSuccess={login}
+      />
     </header>
   );
 }

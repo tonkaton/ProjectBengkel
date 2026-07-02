@@ -10,8 +10,11 @@ const Sidebar = ({
   setActiveTab,
   onSearchClear,
 }) => {
-  const { userRole, logout } = useAuth();
+  const { userRole, logout, currentUser } = useAuth();
   const menuItems = getMenuItems(userRole);
+
+  const displayName = currentUser?.name || currentUser?.email || 'Pengguna';
+  const initial = displayName.charAt(0).toUpperCase();
 
   const [dark, setDark] = useState(
     () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
@@ -92,6 +95,24 @@ const Sidebar = ({
         </nav>
 
         <div className="shrink-0 space-y-1.5 border-t border-line p-4">
+          {/* Logged-in user indicator */}
+          <div
+            className={`mb-1.5 flex items-center gap-3 rounded-2xl bg-base px-3 py-2.5 shadow-soft-in-sm
+              ${sidebarOpen ? 'justify-start' : 'justify-start md:justify-center'}`}
+            title={`Login sebagai ${displayName}`}
+          >
+            <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent font-display text-sm font-bold text-white">
+              {initial}
+              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-base bg-emerald-500" />
+            </span>
+            <div className={`min-w-0 ${labelHide}`}>
+              <p className="truncate text-sm font-semibold leading-tight text-ink">{displayName}</p>
+              <p className="truncate text-[11px] font-medium text-emerald-600">
+                {userRole === 'admin' ? 'Admin • Online' : 'Member • Online'}
+              </p>
+            </div>
+          </div>
+
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
