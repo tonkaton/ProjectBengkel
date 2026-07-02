@@ -1,4 +1,5 @@
 const { Op } = require('sequelize'); // 👈 Wajib import Op buat filter history
+const sequelize = require('../config/database');
 const Reward = require('../models/Reward');
 const LoyaltyPoint = require('../models/LoyaltyPoint');
 const Transaction = require('../models/Transaction'); // 👈 Import Transaction
@@ -54,26 +55,41 @@ exports.remove = async (req, res) => {
 
 // 👇 UPDATE 1: Logic Tukar Poin (Auto-Log ke Transaction)
 exports.exchange = async (req, res) => {
+  // Wrap in a transaction with row locks so concurrent redemptions can't
+  // double-spend points or drive stock negative (check-then-act TOCTOU).
+  const t = await sequelize.transaction();
   try {
-    const reward = await Reward.findByPk(req.params.id);
-    if (!reward || !reward.is_active) return res.status(404).json({ message: 'Reward tidak tersedia' });
-    if (reward.stock <= 0) return res.status(400).json({ message: 'Stok habis' });
+    const reward = await Reward.findByPk(req.params.id, {
+      transaction: t,
+      lock: t.LOCK.UPDATE,
+    });
+    if (!reward || !reward.is_active) {
+      await t.rollback();
+      return res.status(404).json({ message: 'Reward tidak tersedia' });
+    }
+    if (reward.stock <= 0) {
+      await t.rollback();
+      return res.status(400).json({ message: 'Stok habis' });
+    }
 
     // Cek Poin User (Pakai findOrCreate biar aman kalo user baru belum punya record poin)
-    let [points] = await LoyaltyPoint.findOrCreate({ 
+    let [points] = await LoyaltyPoint.findOrCreate({
       where: { UserId: req.user.id },
-      defaults: { points: 0 }
+      defaults: { points: 0 },
+      transaction: t,
+      lock: t.LOCK.UPDATE,
     });
 
     if (points.points < reward.points_needed) {
+      await t.rollback();
       return res.status(400).json({ message: 'Poin tidak cukup' });
     }
 
     // 1. Kurangi Poin & Stok
     points.points -= reward.points_needed;
     reward.stock -= 1;
-    await points.save();
-    await reward.save();
+    await points.save({ transaction: t });
+    await reward.save({ transaction: t });
 
     // 2. CATAT TRANSAKSI "PENUKARAN" (Virtual History)
     await Transaction.create({
@@ -83,14 +99,17 @@ exports.exchange = async (req, res) => {
       points_earned: -reward.points_needed, // Poin Minus (Tanda Keluar)
       status: 'Selesai', // Langsung selesai
       note: `Tukar Reward: ${reward.name}`
-    });
+    }, { transaction: t });
 
-    res.json({ 
-      message: `Berhasil tukar ${reward.name}`, 
+    await t.commit();
+
+    res.json({
+      message: `Berhasil tukar ${reward.name}`,
       remaining_points: points.points,
       data: { reward, points: points.points }
     });
   } catch (err) {
+    await t.rollback();
     console.error('Exchange reward error:', err);
     res.status(500).json({ message: 'Gagal menukar reward' });
   }

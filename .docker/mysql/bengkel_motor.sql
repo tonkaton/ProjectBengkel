@@ -32,7 +32,7 @@ CREATE TABLE `LoyaltyPoints` (
   `updatedAt` datetime NOT NULL,
   `UserId` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `UserId` (`UserId`),
+  UNIQUE KEY `UserId` (`UserId`),
   CONSTRAINT `LoyaltyPoints_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

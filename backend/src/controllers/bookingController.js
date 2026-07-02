@@ -5,7 +5,7 @@ const Transaction = require('../models/Transaction');
 const Service = require('../models/Service');
 const generateQueueNumber = require('../utils/queueGenerator');
 const bcrypt = require('bcryptjs');
-const { Op } = require('sequelize');
+const crypto = require('crypto');
 
 // 1. TAMU: Kirim Data Booking (Public)
 exports.create = async (req, res) => {
@@ -84,16 +84,21 @@ exports.processBooking = async (req, res) => {
     if (booking.status === 'Processed') return res.status(400).json({ message: 'Booking sudah diproses sebelumnya' });
 
     // B. Cek / Buat User (Member)
+    // Match strictly by the phone-derived email. Matching on `name` was unsafe:
+    // a guest booking under someone else's name would attach that guest's
+    // vehicle & transaction to an unrelated existing account.
     const dummyEmail = `${booking.phone}@guest.local`;
-    
-    let user = await User.findOne({ 
-      where: { 
-        [Op.or]: [{ email: dummyEmail }, { name: booking.name }] 
-      } 
+
+    let user = await User.findOne({
+      where: { email: dummyEmail }
     });
 
+    let generatedPassword = null;
     if (!user) {
-      const hashedPassword = await bcrypt.hash('123456', 10); 
+      // Random per-account password instead of a guessable static default
+      // (predictable "email@guest.local" + fixed password = account takeover).
+      generatedPassword = crypto.randomBytes(9).toString('base64url');
+      const hashedPassword = await bcrypt.hash(generatedPassword, 10);
       user = await User.create({
         name: booking.name,
         email: dummyEmail,
@@ -153,12 +158,15 @@ exports.processBooking = async (req, res) => {
         queue: queueNumber,
         price: amount,
         points: points_earned,
-        transactionId: transaction.id
+        transactionId: transaction.id,
+        // Only present when a new member account was just created — pass this
+        // to the customer directly (e.g. verbally/SMS), it is never stored in plaintext.
+        newAccountPassword: generatedPassword || undefined
       }
     });
 
   } catch (error) {
     console.error('Process Booking Error:', error);
-    res.status(500).json({ message: 'Gagal memproses booking: ' + error.message });
+    res.status(500).json({ message: 'Gagal memproses booking' });
   }
 };
