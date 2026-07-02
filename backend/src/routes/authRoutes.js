@@ -5,7 +5,8 @@ const admin = require('../middleware/adminMiddleware');
 
 r.post('/register', c.register);
 r.post('/login', c.login);
-r.get('/me', auth, c.getMe); 
+r.post('/logout', auth, c.logout);
+r.get('/me', auth, c.getMe);
 r.get('/users', auth, admin, c.getAllUsers); 
 r.post('/users', auth, admin, c.createUser); 
 r.delete('/users/:id', auth, admin, c.deleteUser);

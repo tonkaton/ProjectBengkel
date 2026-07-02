@@ -9,6 +9,10 @@ export const authService = {
     return api.get('/auth/me', token);
   },
 
+  logout: async (token) => {
+    return api.post('/auth/logout', {}, token);
+  },
+
   getUsers: async (token) => {
     return api.get('/auth/users', token);
   },

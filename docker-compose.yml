@@ -5,10 +5,10 @@ services:
     build:
       context: .docker/mysql
     environment:
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: bengkel_motor
-      MYSQL_USER: bengkel_motor
-      MYSQL_PASSWORD: bengkel_motor
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: ${DB_NAME:-bengkel_motor}
+      MYSQL_USER: ${DB_USER:?set DB_USER in .env}
+      MYSQL_PASSWORD: ${DB_PASS:?set DB_PASS in .env}
     ports:
       - "3306:3306"
     volumes:
@@ -66,14 +66,10 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      PORT: 5000
+      # Secrets (DB_USER/DB_PASS/DB_NAME/JWT_SECRET/VAPID_*) come from backend/.env
+      # (gitignored, never commit real values). Only the docker-network hostname
+      # is overridden here since "db" resolves via the compose network, not localhost.
       DB_HOST: db
-      DB_USER: bengkel_motor
-      DB_PASS: bengkel_motor
-      DB_NAME: bengkel_motor
-      JWT_SECRET: rahasia123
-      VAPID_PUBLIC_KEY: BFS6LvhOgf4xxurpfDr8SifTkRRAof4gmXnKLvND8Kx0SDLJf-Wm4i7Qiq9QSsLpfKlIsgcyPwVbz_5tsFQHcLA
-      VAPID_PRIVATE_KEY: rYImioE1IJZ8x7rY-N8k5FoJn2ofW9Sa8LIl5dKEXXM
     networks:
       - default
     restart: unless-stopped

@@ -13,6 +13,7 @@ exports.subscribe = async (req, res) => {
     
     res.json({ message: 'Subscribed' });
   } catch (e) {
-    res.status(500).json({ message: 'Push error', error: e.message });
+    console.error('Push subscribe error:', e);
+    res.status(500).json({ message: 'Push error' });
   }
 };

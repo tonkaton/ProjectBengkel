@@ -79,7 +79,22 @@ exports.update = async (req, res) => {
     if (vehicle.UserId !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Tidak berhak mengubah kendaraan ini' });
     }
-    await vehicle.update(req.body);
+
+    // Whitelist fields: prevent mass assignment (e.g. UserId ownership transfer)
+    const { brand, model, plate, year, color, image_url } = req.body;
+    const updatable = { brand, model, plate, year, color, image_url };
+    Object.keys(updatable).forEach((key) => updatable[key] === undefined && delete updatable[key]);
+
+    // Only admins may reassign ownership, and only to a valid user
+    if (req.user.role === 'admin' && req.body.UserId) {
+      const owner = await User.findByPk(req.body.UserId);
+      if (!owner) {
+        return res.status(400).json({ message: 'Pemilik tidak ditemukan' });
+      }
+      updatable.UserId = req.body.UserId;
+    }
+
+    await vehicle.update(updatable);
     res.json({ data: vehicle });
   } catch (err) {
     console.error('Update vehicle error:', err);
